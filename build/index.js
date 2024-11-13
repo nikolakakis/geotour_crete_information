@@ -15,11 +15,28 @@ __webpack_require__.r(__webpack_exports__);
 //import $ from 'jquery';
 
 var thelang = document.getElementsByTagName('html')[0].getAttribute('lang');
+document.addEventListener('DOMContentLoaded', event => {
+  const poiContainers = document.querySelectorAll('.pois-container');
+  poiContainers.forEach(container => {
+    // Get the container ID from the localized data
+    const containerId = container.id;
+
+    // Initialize POIS with the container ID
+    new POIS(containerId);
+  });
+});
 class POIS {
-  constructor(container) {
-    this.container = document.querySelector('.pois-container');
-    this.apiUrl = this.container.dataset.apiurl;
-    this.getPOIData();
+  constructor(containerId) {
+    // Select the container by ID (moved inside the constructor)
+    this.container = document.getElementById(containerId);
+
+    // Check if the container element exists before accessing its dataset
+    if (this.container) {
+      this.apiUrl = this.container.dataset.apiurl;
+      this.getPOIData();
+    } else {
+      //console.error('POIS container element not found:', containerId);
+    }
   }
   getPOIData() {
     console.log("API URL:", this.apiUrl); // Add this line

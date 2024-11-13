@@ -9,6 +9,8 @@ function geotour_information_html( $atts ) {
         'lon' => '',
         'radius' => 10, 
     ), $atts, 'geotour-information' );
+    // Generate a unique ID for the container
+    $container_id = 'pois-container-' . uniqid();
 
     if ( empty( $atts['lat'] ) || empty( $atts['lon'] ) ) {
         return '<p class="geotour-warning">Please provide latitude and longitude using the <code>lat</code> and <code>lon</code> attributes.</p>';
@@ -28,7 +30,12 @@ function geotour_information_html( $atts ) {
 
     // ... enqueuing scripts and styles ...
 
-    $output = '<div class="pois-container pois-grid" data-apiurl="' . esc_attr( $api_url ) . '"></div>';
+    $output = '<div id="' . $container_id . '" class="pois-container pois-grid" data-apiurl="' . esc_attr( $api_url ) . '"></div>';
+    // Pass the container ID to the JavaScript
+    wp_localize_script( 'geotour-information-script', 'geotour_api_data', array(
+        'apiUrl' => $api_url,
+        'containerId' => $container_id, 
+    ) );
     return $output;
 }
 add_shortcode( 'geotour-information', 'geotour_information_html' );
