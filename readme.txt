@@ -1,7 +1,7 @@
 === Geotour Crete Information ===
 Contributors: Nikolakakis Manolis
 Donate link:  (You can add this later if you want to accept donations)
-Tags: geotour, crete, tourism, map, locations, information, shortcode
+Tags: geotour, crete, tourism, locations, information, shortcode
 Banner Image: banner-772x250.png
 Requires at least: 6.0
 Tested up to: 6.7
@@ -12,7 +12,7 @@ License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 **Author: Nikolakakis Manolis <nikolakakis.manolis@gmail.com>** 
 
-This plugin enhances WordPress websites with interactive maps, location details, and other tourist information about Crete by integrating with the Geotour API.
+This plugin enhances WordPress websites with Cretan location details, and other tourist information about Crete by integrating with the Geotour API.
 
 == Description ==
 
@@ -20,11 +20,9 @@ The Geotour Crete Information plugin allows you to easily display information ab
 
 **Features:**
 
-* **Interactive maps:** Display maps with markers for various locations in Crete.
-* **Location details:** Show detailed information about specific locations, including descriptions, images, and contact details.
 * **Customizable shortcodes:**  Control the output and appearance of the displayed information using shortcode parameters.
 * **Admin settings page:** Configure API settings and other plugin options.
-* **Responsive design:**  Ensures the maps and information display correctly on all devices.
+* **Responsive design:**  Ensures the information display correctly on all devices.
 
 This plugin is perfect for:
 
@@ -53,7 +51,7 @@ Refer to the plugin's documentation for a complete list of available shortcodes 
 You can find the plugin documentation on the plugin's website (add your website URL here).
 
 = Where can I get support for the plugin? =
-Please visit the plugin's support forum on WordPress.org (add your support forum URL here).
+Please contact me from the Geotour page (https://www.geotour.gr).
 
 == Screenshots ==
 
@@ -67,3 +65,16 @@ Please visit the plugin's support forum on WordPress.org (add your support forum
 
 = 1.0.0 =
 * Initial release.
+
+== TODO ==
+* Create documentation.
+* Implement alternative display options for categories that needs admission and have working hours (like museums).
+* Location details: Show detailed information about specific locations, including descriptions, images, and contact details.
+* Add support for more Geotour API endpoints.
+* Implement caching to improve performance.
+* Create a widget for displaying Geotour information in sidebars.
+* Translate the plugin into other languages.
+
+== Under Consideration ==
+
+* Interactive maps: Display maps the markers for various locations in Crete.
