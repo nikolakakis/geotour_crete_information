@@ -1,22 +1,30 @@
 {
-    "name": "geotour-crete-information",
-    "version": "0.1.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-      "build": "wp-scripts build",
-      "start": "wp-scripts start",
-      "dev": "wp-scripts start",
-      "devFast": "wp-scripts start",
-      "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "dependencies": {     
-      "@wordpress/scripts": "*",
-      "axios": "^0.21.1",
-      "normalize.css": "^8.0.1"
-    }
+  "name": "geotour-crete-information",
+  "version": "0.1.0",
+  "description": "WordPress plugin that fetches and displays information about Crete from the Geotour API using shortcodes.",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "wp-scripts build && sass ./sass/style.scss ./build/css/index.css",
+    "start": "wp-scripts start && sass --watch ./sass:./build/css",
+    "dev": "wp-scripts start",
+    "devFast": "wp-scripts start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+},
+  "keywords": [
+    "wordpress",
+    "plugin",
+    "geotour",
+    "crete",
+    "tourism",
+    "map",
+    "shortcode"
+  ],
+  "author": "Nikolakakis",
+  "license": "GPL-2.0-or-later",
+  "dependencies": {
+    "@wordpress/scripts": "^30.4.0",
+    "axios": "^0.21.1",
+    "normalize.css": "^8.0.1",
+    "sass": "^1.63.6"
   }
-  
+}

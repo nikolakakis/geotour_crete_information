@@ -1,30 +1,33 @@
 <?php
 /**
  * Plugin Name: Geotour Crete Information
+ * Plugin URI: https://www.geotour.gr/sharing-plugin/
  * Description: Get information from Geotour Crete, https://www.geotour.gr from other Wordpress websites.
  * Version: 0.1.0
- * Author: Nikolakakis Manolis Geotour developer
+ * Requires at least: 5.0
+ * Requires PHP: 7.4 
+ * Author: Nikolakakis Manolis
+ * Author URI: https://www.panotours.gr/
  */
 
-
-// Include necessary files
-//require_once plugin_dir_path( __FILE__ ) . 'includes/api.php';
-//require_once plugin_dir_path( __FILE__ ) . 'includes/scripts.php';
+// Include necessary files.
+require_once plugin_dir_path( __FILE__ ) . 'includes/scripts.php';
+require_once plugin_dir_path( __FILE__ ) . 'admin/admin-settings.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/shortcodes.php'; 
-//require_once plugin_dir_path( __FILE__ ) . 'includes/apiadminpages.php'; 
-//require_once plugin_dir_path( __FILE__ ) . 'includes/api-logs.php'; 
-
-
-// Register activation/deactivation hooks (if needed)
-//register_activation_hook( __FILE__, 'geotour_shared_content_activate' );
-//register_deactivation_hook( __FILE__, 'geotour_shared_content_deactivate' );
-
-// ... (activation and deactivation functions can go here) ... 
-
-
-function geotour_enqueue_scripts() {
-    wp_enqueue_style( 'geotour-styles', plugins_url( 'build/style.css', __FILE__ ) ); 
-    wp_enqueue_script( 'geotour-scripts', plugins_url( 'build/index.js', __FILE__ ), array( 'jquery' ), '1.0', true );
+// If this file is called directly, abort.
+if ( ! defined( 'WPINC' ) ) {
+    die;
 }
-add_action( 'wp_enqueue_scripts', 'geotour_enqueue_scripts' ); 
+
+/**
+ * Add plugin meta links.
+ */
+function my_plugin_add_plugin_meta_links( $links, $file ) {
+    if ( plugin_basename( __FILE__ ) === $file ) {
+        $links[] = '<a href="https://example.com/my-plugin-docs/" target="_blank">Docs & FAQs</a>';
+        $links[] = '<a href="https://example.com/my-plugin-videos/" target="_blank">Video Tutorials</a>';
+    }
+    return $links;
+}
+add_filter( 'plugin_row_meta', 'my_plugin_add_plugin_meta_links', 10, 2 ); 
 ?>
