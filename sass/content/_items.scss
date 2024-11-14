@@ -13,31 +13,21 @@
     }
 }
 
-
-// sass/geotour-information.scss
-.pois-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 10px;
-  
-    @media (max-width: 1200px) {
-      grid-template-columns: repeat(3, 1fr); 
-    }
-  
-    @media (max-width: 1024px) {
-      grid-template-columns: repeat(2, 1fr); 
-    }
-  
-    @media (max-width: 768px) {
-      grid-template-columns: repeat(1, 1fr); 
-    }
-  }
-  
+.pois-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); // Adjust 250px as needed
+  gap: 10px;
   .poi-item {
     background: #eee;
     padding: 6px;
   }
-  
+  h3 a {
+    font-size: 1.4rem;
+    text-decoration: none;
+  }
+  .poi-excerpt {
+    font-size: 1rem;
+  }
   .poi-image-wrapper {
     position: relative;
     width: 100%;
@@ -76,3 +66,9 @@
     font-size: 12px;
     border-radius: 3px;
   }
+  
+}
+
+  
+  
+  

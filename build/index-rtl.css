@@ -19,40 +19,30 @@
   font-family: monospace;
 }
 
-.pois-grid {
+.pois-container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 10px;
 }
-@media (max-width: 1200px) {
-  .pois-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-@media (max-width: 1024px) {
-  .pois-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (max-width: 768px) {
-  .pois-grid {
-    grid-template-columns: repeat(1, 1fr);
-  }
-}
-
-.poi-item {
+.pois-container .poi-item {
   background: #eee;
   padding: 6px;
 }
-
-.poi-image-wrapper {
+.pois-container h3 a {
+  font-size: 1.4rem;
+  text-decoration: none;
+}
+.pois-container .poi-excerpt {
+  font-size: 1rem;
+}
+.pois-container .poi-image-wrapper {
   position: relative;
   width: 100%;
   padding-bottom: 56.25%;
   height: 0;
   overflow: hidden;
 }
-.poi-image-wrapper img {
+.pois-container .poi-image-wrapper img {
   position: absolute;
   top: 0;
   right: 0;
@@ -61,8 +51,7 @@
   -o-object-fit: cover;
      object-fit: cover;
 }
-
-.poi-categories {
+.pois-container .poi-categories {
   position: absolute;
   bottom: 0;
   right: 0;
@@ -72,8 +61,7 @@
   padding: 5px;
   font-size: 14px;
 }
-
-.poi-distance {
+.pois-container .poi-distance {
   position: absolute;
   top: 5px;
   left: 5px;

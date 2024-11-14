@@ -6,7 +6,7 @@ Banner Image: banner-772x250.png
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.0.0;
+Stable tag: 1.0.1;
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -65,6 +65,10 @@ Please contact me from the Geotour page (https://www.geotour.gr).
 
 = 1.0.0 =
 * Initial release.
+= 1.0.1 =
+* CSS changes to improve grid items response to the parent container in order to be used in a variary of scenarios, even in sidebars
+* Impovement of the admin page 
+
 
 == TODO ==
 * Create documentation.

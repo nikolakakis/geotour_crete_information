@@ -25,8 +25,16 @@ function geotour_plugin_options_page() {
 
     ?>
     <div class="wrap">
-        <h1>Geotour Crete Information Settings</h1>
-        <p><em>You will need to obtain a valid API key from Geotour website. The API key is unique to a certain domain name. So if you have multiple domain names you will need multiple API keys.</em></p>
+        
+    <div class="geotour-plugin-header" style="text-align: center; margin-bottom: 20px;"> 
+            <img src="<?php echo plugins_url( '../banner-772x250.png', __FILE__ ); ?>" alt="Geotour Crete Sharing Plugin Banner" style="max-width: 100%; height: auto;">
+            <h1 style="margin-top: 10px;">Geotour Crete Sharing Plugin</h1> 
+        </div>
+
+        <div class="geotour-plugin-notice" style="border: 1px solid #31708f; background-color: #d9edf7; color: #31708f; padding: 10px; margin-bottom: 20px;">
+            <p><em>You will need to obtain a valid API key from Geotour website. The API key is unique to a certain domain name. So if you have multiple domain names you will need multiple API keys.</em></p>
+            <p>For more information about using this plugin, please visit: <a href="https://www.geotour.gr/geotour-plugin-share" target="_blank">https://www.geotour.gr/geotour-plugin-share</a></p>
+        </div>
         <form method="post" action="options.php">
             <?php 
             settings_fields( 'geotour_plugin_settings_group' );
