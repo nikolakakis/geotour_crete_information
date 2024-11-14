@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: Geotour Crete Information
- * Plugin URI: https://www.geotour.gr/geotour-share-plugin/
+ * Plugin URI: https://www.geotour.gr/about-geotour/geotour-share-plugin/
  * Description: Get information from Geotour Crete, https://www.geotour.gr from other Wordpress websites.
- * Version: 1.0.0
+ * Version: 1.0.2
  * Requires at least: 5.0
  * Requires PHP: 7.4 
  * Author: Nikolakakis Manolis
@@ -24,8 +24,8 @@ if ( ! defined( 'WPINC' ) ) {
  */
 function my_plugin_add_plugin_meta_links( $links, $file ) {
     if ( plugin_basename( __FILE__ ) === $file ) {
-        $links[] = '<a href="https://example.com/my-plugin-docs/" target="_blank">Docs & FAQs</a>';
-        $links[] = '<a href="https://example.com/my-plugin-videos/" target="_blank">Video Tutorials</a>';
+        $links[] = '<a href="https://www.geotour.gr/about-geotour/geotour-share-plugin/" target="_blank">Docs & FAQs</a>';
+        $links[] = '<a href="https://www.geotour.gr/about-geotour/geotour-share-plugin/" target="_blank">Video Tutorials</a>';
     }
     return $links;
 }
