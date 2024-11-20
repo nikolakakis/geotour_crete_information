@@ -71,3 +71,75 @@
   font-size: 12px;
   border-radius: 3px;
 }
+
+#geotour-events-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-gap: 20px;
+}
+#geotour-events-container .geotour-event {
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  padding: 15px;
+}
+#geotour-events-container .geotour-event h3 {
+  margin-top: 0;
+}
+#geotour-events-container .geotour-event h3 a {
+  font-size: 1.2em;
+  text-decoration: none;
+  color: inherit;
+}
+#geotour-events-container .geotour-event .featured-image {
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 Aspect Ratio */
+  background-size: cover;
+  background-position: center;
+  margin-bottom: 15px;
+}
+#geotour-events-container .geotour-event .date {
+  text-align: center;
+}
+#geotour-events-container .geotour-event .date .day {
+  display: block;
+  font-size: 1.8em;
+  font-weight: bold;
+}
+#geotour-events-container .geotour-event .date .month {
+  display: block;
+  font-size: 0.8em;
+}
+#geotour-events-container .geotour-event .date .year {
+  display: block;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+#geotour-events-container .geotour-event .event-duration {
+  text-align: center;
+  color: white;
+  padding: 2px 5px;
+  font-size: 0.8rem;
+  background-color: #444;
+  border-radius: 6px;
+}
+#geotour-events-container .geotour-event .event-details {
+  display: flex;
+}
+#geotour-events-container .geotour-event .event-details .column {
+  width: 50%;
+  padding: 0 10px;
+}
+#geotour-events-container .geotour-event .event-details .column:first-child {
+  border-left: 1px solid #ccc;
+}
+#geotour-events-container .geotour-event .event-details .date {
+  margin-bottom: 10px;
+}
+#geotour-events-container .geotour-event .event-details span {
+  font-weight: bold;
+}
+#geotour-events-container .geotour-event a {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.9em;
+}

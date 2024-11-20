@@ -39,5 +39,32 @@ function geotour_information_html( $atts ) {
     return $output;
 }
 add_shortcode( 'geotour-information', 'geotour_information_html' );
+add_shortcode( 'geotour_events', 'geotour_events_shortcode' );
+add_shortcode( 'geotour_events', 'geotour_events_shortcode' );
+
+function geotour_events_shortcode( $atts ) {
+    $atts = shortcode_atts(
+        array(
+            'latitude' => '35.337042', // Default latitude (e.g., Athens)
+            'longitude' => '24.684551', // Default longitude
+            'radius' => '10', // Default radius in km
+            'max-items' => '6',  // Default maximum items
+        ),
+        $atts,
+        'geotour_events'
+    );
+
+    // Sanitize and validate attributes (important!)
+    $latitude = floatval($atts['latitude']);
+    $longitude = floatval($atts['longitude']);
+    $radius = floatval($atts['radius']);
+    $maxItems = intval( $atts['max-items'] );
+    // Apply the filter to pass the shortcode attributes
+    $atts = apply_filters( 'geotour_events_shortcode_atts', $atts, 'geotour_events' ); 
+
+    // Output a container for the events (you can customize this)
+    return '<div id="geotour-events-container"></div>';
+}
+
 
 ?>

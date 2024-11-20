@@ -23,7 +23,37 @@ function geotour_shared_content_enqueue_scripts() {
         '1.0.0', 
         true 
     );
+    
+    // Get the shortcode attributes from the content
+    $shortcode_atts = geotour_extract_shortcode_atts( 'geotour_events' );
+
+    // Pass the data as a JavaScript object
+    wp_add_inline_script( 
+        'geotour-shared-content-script', 
+        'const geotourEventsParams = ' . json_encode( $shortcode_atts ) . ';', 
+        'before' 
+    );
 }
 add_action( 'wp_enqueue_scripts', 'geotour_shared_content_enqueue_scripts' );
+
+function geotour_extract_shortcode_atts( $shortcode_name ) {
+    global $post;
+    $atts = array(
+        'latitude' => '35.337042', // Default latitude (e.g., Athens)
+        'longitude' => '24.684551', // Default longitude
+        'radius' => '10', // Default radius in km
+        'max-items' => '9',  // Default maximum items
+    );
+
+    if ( $post && has_shortcode( $post->post_content, $shortcode_name ) ) {
+        $pattern = get_shortcode_regex( array( $shortcode_name ) );
+        if ( preg_match_all( '/' . $pattern . '/s', $post->post_content, $matches )
+             && array_key_exists( 2, $matches ) && array_key_exists( 0, $matches[2] ) ) {
+            $atts = shortcode_parse_atts( $matches[3][0] );
+        }
+    }
+    return $atts;
+}
+
 
 ?>
