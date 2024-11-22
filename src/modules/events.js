@@ -2,8 +2,8 @@ export default class EVENTS {
     constructor() {
       // Get shortcode parameters (make sure you have a way to access them, 
       // e.g., using wp_localize_script as mentioned before)
-      this.userLat = parseFloat(geotourEventsParams.latitude);  
-      this.userLng = parseFloat(geotourEventsParams.longitude);
+      this.userLat = parseFloat(geotourEventsParams.lat);  
+      this.userLng = parseFloat(geotourEventsParams.lon);
       this.radius = parseFloat(geotourEventsParams.radius); 
   
       this.apiUrl = 'https://www.geotour.gr/wp-json/tribe/events/v1/events';

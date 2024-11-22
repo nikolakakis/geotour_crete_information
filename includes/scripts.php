@@ -39,8 +39,8 @@ add_action( 'wp_enqueue_scripts', 'geotour_shared_content_enqueue_scripts' );
 function geotour_extract_shortcode_atts( $shortcode_name ) {
     global $post;
     $atts = array(
-        'latitude' => '35.337042', // Default latitude (e.g., Athens)
-        'longitude' => '24.684551', // Default longitude
+        'lat' => '35.337042', // Default latitude (e.g., Athens)
+        'lon' => '24.684551', // Default longitude
         'radius' => '10', // Default radius in km
         'max-items' => '9',  // Default maximum items
     );

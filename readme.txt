@@ -61,7 +61,8 @@ Please contact me from the Geotour page (https://www.geotour.gr).
    [screenshot-2.png]
 
 == Changelog ==
-
+= 1.1.1 =
+* Minor fixes
 = 1.1.0 =
 * Add shortcode to add events to the hosting website. No API key is needed for this.
 = 1.0.2 =

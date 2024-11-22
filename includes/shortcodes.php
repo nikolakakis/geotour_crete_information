@@ -4,7 +4,7 @@
 function geotour_information_html( $atts ) {
     $atts = shortcode_atts( array(
         'category' => 'beach',
-        'items' => 10,
+        'max-items' => 10,
         'lat' => '', 
         'lon' => '',
         'radius' => 10, 
@@ -20,7 +20,7 @@ function geotour_information_html( $atts ) {
 
     // Construct the API URL carefully
     $api_url = "https://www.geotour.gr/wp-json/panotours/v2/listings";
-    $api_url .= "?items=" . urlencode( $atts['items'] );
+    $api_url .= "?items=" . urlencode( $atts['max-items'] );
     $api_url .= "&language=en";
     $api_url .= "&lat=" . urlencode( $atts['lat'] );
     $api_url .= "&lon=" . urlencode( $atts['lon'] );
@@ -40,13 +40,13 @@ function geotour_information_html( $atts ) {
 }
 add_shortcode( 'geotour-information', 'geotour_information_html' );
 add_shortcode( 'geotour_events', 'geotour_events_shortcode' );
-add_shortcode( 'geotour_events', 'geotour_events_shortcode' );
+
 
 function geotour_events_shortcode( $atts ) {
     $atts = shortcode_atts(
         array(
-            'latitude' => '35.337042', // Default latitude (e.g., Athens)
-            'longitude' => '24.684551', // Default longitude
+            'lat' => '35.337042', // Default latitude (e.g., Athens)
+            'lon' => '24.684551', // Default longitude
             'radius' => '10', // Default radius in km
             'max-items' => '6',  // Default maximum items
         ),
@@ -55,8 +55,8 @@ function geotour_events_shortcode( $atts ) {
     );
 
     // Sanitize and validate attributes (important!)
-    $latitude = floatval($atts['latitude']);
-    $longitude = floatval($atts['longitude']);
+    $latitude = floatval($atts['lat']);
+    $longitude = floatval($atts['lon']);
     $radius = floatval($atts['radius']);
     $maxItems = intval( $atts['max-items'] );
     // Apply the filter to pass the shortcode attributes
