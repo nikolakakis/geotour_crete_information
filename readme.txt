@@ -50,7 +50,7 @@ Refer to the plugin's documentation for a complete list of available shortcodes 
 You can find the plugin documentation on the plugin's website (add your website URL here).
 
 = Where can I get support for the plugin? =
-Please contact me from the Geotour page (https://www.geotour.gr).
+Please check the plugin page https://www.geotour.gr/about-geotour/geotour-share-plugin/ or contact me from the Geotour page (https://www.geotour.gr/about-geotour/contact/).
 
 == Screenshots ==
 
@@ -61,6 +61,9 @@ Please contact me from the Geotour page (https://www.geotour.gr).
    [screenshot-2.png]
 
 == Changelog ==
+= 1.1.2 =
+* Minor fixes
+* Improvement of the admin page 
 = 1.1.1 =
 * Minor fixes
 = 1.1.0 =
@@ -68,20 +71,18 @@ Please contact me from the Geotour page (https://www.geotour.gr).
 = 1.0.2 =
 * Minor fixes
 = 1.0.1 =
-* CSS changes to improve grid items response to the parent container in order to be used in a variary of scenarios, even in sidebars
-* Impovement of the admin page 
+* CSS changes to improve grid items response to the parent container in order to be used in a variety of scenarios, even in sidebars
+* Improvement of the admin page 
 = 1.0.0 =
 * Initial release.
 
 == TODO ==
-* Create documentation.
-* Implement alternative display options for categories that needs admission and have working hours (like museums).
+* Implement alternative display options for categories needing admission and working hours (like museums).
 * Location details: Show detailed information about specific locations, including descriptions, images, and contact details.
-* Add support for more Geotour API endpoints.
 * Implement caching to improve performance.
-* Create a widget for displaying Geotour information in sidebars.
+* Create alternative display formats that are more suitable for sidebars.
+* Add an include and exclude parameters to force exclude or include a particular place, despite the distance from the position set in the lat and lon
 * Translate the plugin into other languages.
 
 == Under Consideration ==
-
 * Interactive maps: Display maps the markers for various locations in Crete.

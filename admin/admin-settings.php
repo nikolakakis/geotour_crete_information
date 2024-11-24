@@ -33,8 +33,15 @@ function geotour_plugin_options_page() {
 
         <div class="geotour-plugin-notice" style="border: 1px solid #31708f; background-color: #d9edf7; color: #31708f; padding: 10px; margin-bottom: 20px;">
             <p><em>You will need to obtain a valid API key from Geotour website. The API key is unique to a certain domain name. So if you have multiple domain names you will need multiple API keys.</em></p>
-            <p>For more information about using this plugin, please visit: <a href="https://www.geotour.gr/geotour-plugin-share" target="_blank">https://www.geotour.gr/geotour-plugin-share</a></p>
+            <p>For more information about using this plugin, please visit: <a href="https://www.geotour.gr/about-geotour/geotour-share-plugin/" target="_blank">https://www.geotour.gr/about-geotour/geotour-share-plugin/</a></p>
         </div>
+        <?php // if ( $api_key ) : ?>
+            <!--
+            <div class="notice notice-<?php // echo $api_key_valid ? 'success' : 'error'; ?>">
+                <p>Geotour API Key is <?php // echo $api_key_valid ? 'valid' : 'invalid'; ?>.</p>
+            </div>
+        -->
+        <?php // endif; ?>
         <form method="post" action="options.php">
             <?php 
             settings_fields( 'geotour_plugin_settings_group' );
@@ -42,12 +49,39 @@ function geotour_plugin_options_page() {
             submit_button(); 
             ?>
         </form>
-
-        <?php if ( $api_key ) : ?>
-            <div class="notice notice-<?php echo $api_key_valid ? 'success' : 'error'; ?>">
-                <p>Geotour API Key is <?php echo $api_key_valid ? 'valid' : 'invalid'; ?>.</p>
-            </div>
-        <?php endif; ?>
+        <h2 style="margin: 10px 0px;">Shortcodes examples</h2>
+            <p>Here are some short code examples that you can use to retrieve data from Geotour Crete<br />
+                The parameteres used are:</p>
+            <ul style="list-style-type: disc; padding-left: 15px; ">
+                <li>lon: it is the longitude of the POSITION of either a Place (Listing) or a venue in case of an Event, which is a number and in Crete the value is between 23.4 and 26.3.</li>
+                <li>lat: it is the latitude of the POSITION of either a Place (Listing) or a venue in case of an Event, which is a number and in Crete the value is between 34.7 and 35.7.</li>
+                <li>radius: the kilometers from the position to search for Places, or Events based on the Venue of the event</li>
+                <li>category: the categories of the place to search for. (No valid for Events). One or more values separated with a comma can be used to filter the Places. Some categories are: </li>
+                <ul style="list-style-type: circle; padding-left: 35px; ">
+                    <li>archaeological-site</li>
+                    <li>religion-pois-en</li>
+                    <li>beach</li>
+                    <li>museum-en</li>
+                    <li>villages-en</li>
+                    <li>environment</li>
+                    <li>fortifications</li>
+                    <li>locations-areas</li>
+                    <li>point-of-archaeological-or-historical-interest</li>
+                </ul>
+                <li>max-items: the maximum number of items to return for each shortcode</li>
+            </ul>
+            <h3>Shortcodes for Places</h3>
+            <p><em>A valid API key is required for the specific domain that will use the shortcode.</em></p>
+            <p><strong>Multiple shortcodes with different parameters can be used in the same page, eg one for beaches and another for archaeological sites and so on.</strong></p>
+            <p>[geotour-information category="villages-en" lat="35.035" lon="24.789" max-items="5"]</p>
+            <p>[geotour-information category="environment,fortifications,locations-areas" lat="35.2" lon="25.1" max-items="12" radius="5"]</p>
+            <p>[geotour-information category="museum-en" lat="35.1" lon="24.8" max-items="3"]</p>
+            <p>[geotour-information category="beach,restaurant" lat="35.3" lon="25.2" max-items="15"]</p>
+            <h3>Shortcodes for Events</h3>
+            <p><em>No key is required for this.</em></p>
+            <p><strong>Only one event shortcode per page can exist.</strong></p>
+            <p>[geotour_events lat="35.337042" lon="24.684551" radius="20" max-items="3"]</p>
+       
     </div>
     <?php
 }
@@ -56,7 +90,7 @@ function geotour_plugin_options_page() {
  * Function to check the validity of the API key.
  */
 function geotour_check_api_key( $api_key ) {
-    $test_url = 'https://www.geotour.gr/wp-json/panotours/v2/listings?language=en&lat=35.035557&lon=24.789770&radius=10&category=beach&apikey=' . $api_key;
+    $test_url = 'https://www.geotour.gr/wp-json/panotours/v2/listings?language=en&lat=35.035557&lon=24.789770&radius=30&category=pois&apikey=' . $api_key;
 
     $response = wp_remote_get( $test_url );
     $response_body = wp_remote_retrieve_body( $response );
