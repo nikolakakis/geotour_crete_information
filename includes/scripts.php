@@ -7,21 +7,20 @@
 function geotour_shared_content_enqueue_scripts() {
 
     // Enqueue the CSS file
-    wp_enqueue_style( 
-        'geotour-shared-content-styles', 
-        plugin_dir_url( __FILE__ ) . '../build/index.css',
-        array(), 
-        '1.0.0', 
-        'all' 
+    wp_enqueue_style(
+        'geotour-shared-content-styles',
+        'https://geotour.local/wp-content/plugins/geotour_crete_information/build/index.css', // Absolute URL
+        array(),
+        '1.2.0',
+        'all'
     );
 
-    // Enqueue the JavaScript file
-    wp_enqueue_script( 
-        'geotour-shared-content-script', 
-        plugin_dir_url( __FILE__ ) . '../build/index.js',
-        array( 'jquery' ), 
-        '1.0.0', 
-        true 
+    wp_enqueue_script(
+        'geotour-shared-content-script',
+        'https://geotour.local/wp-content/plugins/geotour_crete_information/build/index.js', // Absolute URL
+        array('jquery'),
+        '1.2.0',
+        true
     );
     
     // Get the shortcode attributes from the content

@@ -1,0 +1,42 @@
+/* admin/css/admin-styles.css */
+
+.nav-tab-wrapper {
+    display: flex;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 20px;
+}
+
+.nav-tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-bottom: none;
+    background-color: #f0f0f1;
+    margin-right: 5px;
+    text-decoration: none;
+    color: #0073aa;
+    transition: background-color 0.3s ease;
+}
+
+.nav-tab:hover {
+    background-color: #e0e0e1;
+}
+
+.nav-tab-active {
+    background-color: #fff;
+    border-color: #ccc;
+    border-bottom: 1px solid #fff;
+    color: #23282d;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+.tab-content.active {
+    display: block;
+}

@@ -3,9 +3,9 @@
  * Plugin Name: Geotour Crete Information
  * Plugin URI: https://www.geotour.gr/about-geotour/geotour-share-plugin/
  * Description: Get information from Geotour Crete, https://www.geotour.gr from other Wordpress websites.
- * Version: 1.1.2
+ * Version: 1.2.0
  * Requires at least: 5.0
- * Requires PHP: 7.4 
+ * Requires PHP: 7.4
  * Author: Nikolakakis Manolis
  * Author URI: https://www.panotours.gr/
  */
@@ -13,7 +13,8 @@
 // Include necessary files.
 require_once plugin_dir_path( __FILE__ ) . 'includes/scripts.php';
 require_once plugin_dir_path( __FILE__ ) . 'admin/admin-settings.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/shortcodes.php'; 
+require_once plugin_dir_path( __FILE__ ) . 'includes/shortcodes.php';
+
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
     die;
@@ -29,5 +30,7 @@ function my_plugin_add_plugin_meta_links( $links, $file ) {
     }
     return $links;
 }
-add_filter( 'plugin_row_meta', 'my_plugin_add_plugin_meta_links', 10, 2 ); 
-?>
+add_filter( 'plugin_row_meta', 'my_plugin_add_plugin_meta_links', 10, 2 );
+
+// Define a constant for the plugin's base URL.  This is MUCH better.
+define( 'GEOTOUR_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
