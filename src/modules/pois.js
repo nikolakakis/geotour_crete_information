@@ -1,4 +1,3 @@
-
 //import $ from 'jquery';
 
 var thelang = document.getElementsByTagName('html')[0].getAttribute('lang');
@@ -22,6 +21,8 @@ class POIS{
         // Check if the container element exists before accessing its dataset
         if (this.container) { 
             this.apiUrl = this.container.dataset.apiurl;
+            this.radius = this.container.dataset.radius || 10; // Default radius
+            this.items = this.container.dataset.items || 12; // Default items
             this.getPOIData();
         } else {
             //console.error('POIS container element not found:', containerId);
@@ -29,8 +30,9 @@ class POIS{
     }
 
     getPOIData() {
-        console.log("API URL:", this.apiUrl); // Add this line
-        fetch(this.apiUrl)
+        const url = `${this.apiUrl}&radius=${this.radius}&items=${this.items}`;
+        console.log("API URL:", url);
+        fetch(url)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');

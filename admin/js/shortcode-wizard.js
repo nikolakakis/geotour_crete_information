@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('generated-shortcode').value = shortcode;
 
         // Fetch and display data in the preview container
-        var apiUrl = `https://www.geotour.gr/wp-json/panotours/v2/listings?language=${language}&lat=${lat}&lon=${lon}&radius=${radius}&category=${categories}&max-items=${maxItems}&apikey=${geotourSettings.apiKey}`;
+        var apiUrl = `https://www.geotour.gr/wp-json/panotours/v2/listings?language=${language}&lat=${lat}&lon=${lon}&radius=${radius}&category=${categories}&items=${maxItems}&apikey=${geotourSettings.apiKey}`;
         fetch(apiUrl)
             .then(response => response.json())
             .then(data => {

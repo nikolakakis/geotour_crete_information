@@ -1,5 +1,8 @@
 <div class="wrap">
     <h2>Information Shortcode Builder</h2>
+    <p>To use the wizard you need to set the point in the map below first. From this point all the listings from the selected categories that are in a distance less than the Radius will show up. </p>
+    <p>The max items number will define the maximum listings that can be shown at a time. The maximum number cannot exceed 20 per shortcode.</p>
+    <p>Language has only one value and that is English for now.</p>
     <form id="geotour-information-shortcode-form">
         <div id="map" style="height: 400px;"></div>
         <label for="lat">Latitude:</label>
@@ -29,7 +32,7 @@
             <option value="en">English</option>
         </select>
     </form>
-    <h2>Generated Shortcode</h2>
+    <h2>Generated Shortcode for the Points of Interest</h2>
     <textarea id="generated-shortcode" readonly></textarea>
     <h2>Preview</h2>
     <?php $api_key = get_option('geotour_api_key'); ?>

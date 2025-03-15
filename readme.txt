@@ -61,6 +61,10 @@ Please check the plugin page https://www.geotour.gr/about-geotour/geotour-share-
    [screenshot-2.png]
 
 == Changelog ==
+= 1.2.1 =
+* Minor fixes and styling of the admin page
+= 1.2.0 =
+* Improved admin pages. A wizard is added to generate the shortcodes.
 = 1.1.2 =
 * Minor fixes
 * Improvement of the admin page 

@@ -9,19 +9,21 @@ function geotour_shared_content_enqueue_scripts() {
     // Enqueue the CSS file
     wp_enqueue_style(
         'geotour-shared-content-styles',
-        'https://geotour.local/wp-content/plugins/geotour_crete_information/build/index.css', // Absolute URL
+        plugin_dir_url( __FILE__ ) . '../build/index.css', // Correct relative path
         array(),
-        '1.2.0',
+        '1.2.1',
         'all'
     );
 
+    // Enqueue the JavaScript file
     wp_enqueue_script(
         'geotour-shared-content-script',
-        'https://geotour.local/wp-content/plugins/geotour_crete_information/build/index.js', // Absolute URL
+        plugin_dir_url( __FILE__ ) . '../build/index.js', // Correct relative path
         array('jquery'),
-        '1.2.0',
+        '1.2.1',
         true
     );
+
     
     // Get the shortcode attributes from the content
     $shortcode_atts = geotour_extract_shortcode_atts( 'geotour_events' );

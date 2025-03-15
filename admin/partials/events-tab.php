@@ -1,5 +1,6 @@
 <div class="wrap">
-    <h2>Events Shortcode Builder</h2>
+    <h2>Events Shortcode Builder NOT IMPLEMENTED YET</h2>
+    <p style="font-size: 16px;">The events sharing is a feature that will be added in the future</p>
     <form id="geotour-events-shortcode-form">
         <div id="map-events" style="height: 400px;"></div>
         <label for="lat-events">Latitude:</label>
@@ -11,7 +12,7 @@
         <label for="max-items-events">Max Items:</label>
         <input type="number" id="max-items-events" name="max-items" value="12" required>
     </form>
-    <h2>Generated Shortcode</h2>
+    <h2>Generated Shortcode for events (not working at the moment)</h2>
     <textarea id="generated-shortcode-events" readonly></textarea>
     <h2>Preview</h2>
     <?php $api_key = get_option('geotour_api_key'); ?>

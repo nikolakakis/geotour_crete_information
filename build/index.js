@@ -2,6 +2,18 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./sass/main.scss":
+/*!************************!*\
+  !*** ./sass/main.scss ***!
+  \************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
+
+/***/ }),
+
 /***/ "./src/modules/events.js":
 /*!*******************************!*\
   !*** ./src/modules/events.js ***!
@@ -154,14 +166,17 @@ class POIS {
     // Check if the container element exists before accessing its dataset
     if (this.container) {
       this.apiUrl = this.container.dataset.apiurl;
+      this.radius = this.container.dataset.radius || 10; // Default radius
+      this.items = this.container.dataset.items || 12; // Default items
       this.getPOIData();
     } else {
       //console.error('POIS container element not found:', containerId);
     }
   }
   getPOIData() {
-    console.log("API URL:", this.apiUrl); // Add this line
-    fetch(this.apiUrl).then(response => {
+    const url = `${this.apiUrl}&radius=${this.radius}&items=${this.items}`;
+    console.log("API URL:", url);
+    fetch(url).then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -194,18 +209,6 @@ class POIS {
   }
 }
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (POIS);
-
-/***/ }),
-
-/***/ "./sass/main.scss":
-/*!************************!*\
-  !*** ./sass/main.scss ***!
-  \************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
 
 /***/ })
 
