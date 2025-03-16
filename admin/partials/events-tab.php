@@ -1,3 +1,6 @@
+<?php
+// Path: admin/partials/events-tab.php
+?> 
 <div class="wrap">
     <h2>Events Shortcode Builder NOT IMPLEMENTED YET</h2>
     <p style="font-size: 16px;">The events sharing is a feature that will be added in the future</p>

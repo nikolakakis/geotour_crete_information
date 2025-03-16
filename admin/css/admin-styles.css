@@ -1,5 +1,6 @@
 /* admin/css/admin-styles.css */
 
+/* --- Existing Styles (Tabs) --- */
 .nav-tab-wrapper {
     display: flex;
     border-bottom: 1px solid #ccc;
@@ -39,4 +40,186 @@
 
 .tab-content.active {
     display: block;
+}
+
+/* --- General Styles --- */
+.geotour-guidelines {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.geotour-guidelines p {
+    margin: 0 0 10px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.geotour-step {
+    margin-bottom: 30px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+.geotour-step h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #22a575;
+    font-size: 18px;
+}
+
+/* --- Step 1: Map --- */
+.geotour-map-container {
+    height: 250px;
+    margin: 0 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Step 2: Categories --- */
+.geotour-categories-container {
+    max-height: 120px; /* Further reduced */
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px; /* Reduced gap */
+}
+
+.geotour-category-label {
+    margin-bottom: 4px; /* Reduced vertical spacing */
+    flex: 0 0 calc(50% - 5px); /* 2 items/row default (narrow screens) */
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.geotour-category-label input {
+    display: none;
+}
+
+.geotour-checkbox-custom {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #22a575;
+    border-radius: 4px;
+    margin-right: 8px;
+    position: relative;
+    top: 5px;
+}
+
+.geotour-category-label input:checked + .geotour-checkbox-custom::before {
+    content: '\2713';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #22a575;
+    font-size: 16px;
+}
+
+/* 4 items per row on wider screens */
+@media (min-width: 768px) {
+    .geotour-category-label {
+        flex: 0 0 calc(25% - 5px); /* 4 items per row */
+    }
+}
+
+/* --- Step 3: Other Parameters --- */
+
+.geotour-step.step3-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap:10px;
+}
+
+.geotour-chosen-point-container {
+    display: inline-block;    
+    margin-bottom: 0;
+    width: auto;
+}
+
+.geotour-chosen-point-container label {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.geotour-chosen-point-container input {
+    flex: 0 0 50px;
+    padding: 5px;
+    width: 60px;
+}
+
+.geotour-other-inputs {
+    display: inline-block;
+    width: auto;
+    padding: 0px 10px;
+    background-color: rgba(34, 165, 117, 0.9);
+}
+.geotour-other-inputs #language {
+    width: 100px;
+}
+.geotour-other-inputs input {
+    width: 60px;
+}
+
+.geotour-other-inputs label {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    margin-left: 15px;
+    color: white;
+}
+
+.geotour-other-inputs input,
+.geotour-other-inputs select {
+    flex: 0 0 60px;
+    padding: 5px;
+}
+
+/* Media query for wider screens (Step 3) */
+@media (min-width: 992px) {
+    .geotour-step.step3-container{
+        flex-wrap:nowrap;
+    }
+    .geotour-chosen-point-container,
+    .geotour-other-inputs {
+         margin-right:15px;
+
+    }
+}
+/* --- Final Step: Shortcode --- */
+.geotour-final-step {
+    background-color: #f0f8ff;
+    border-color: #6495ed;
+}
+
+.geotour-shortcode-copy-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.geotour-shortcode-copy-container textarea {
+    flex: 1;
+    resize: none;
+    min-height: 50px;
+}
+
+.geotour-copy-button {
+    background-color: #22a575;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.geotour-copy-button:hover {
+    background-color: #1a835f;
 }

@@ -1,3 +1,4 @@
+// Path: admin/js/shortcode-wizard.js
 document.addEventListener('DOMContentLoaded', function () {
     if (typeof L === 'undefined') {
         console.error('Leaflet library is not loaded.');
@@ -32,6 +33,21 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('lon-events').value = latlng.lng;
         debounceGenerateShortcodeEvents();
     });
+
+
+    // Copy shortcode functionality
+    const copyButton = document.getElementById('copy-shortcode');
+    const shortcodeTextarea = document.getElementById('generated-shortcode');
+
+    if (copyButton && shortcodeTextarea) { // Check if elements exist
+        copyButton.addEventListener('click', function() {
+            shortcodeTextarea.select();
+            document.execCommand('copy');
+            // Optional: Provide feedback to the user (e.g., change button text)
+            copyButton.textContent = 'Copied!';
+            setTimeout(() => { copyButton.textContent = 'Copy Shortcode'; }, 2000); // Reset after 2 seconds
+        });
+    }
 
     function generateShortcode() {
         var lat = document.getElementById('lat').value;
