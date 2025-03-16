@@ -1,3 +1,4 @@
+// /src/modules/events.js
 export default class EVENTS {
     constructor() {
       // Get shortcode parameters (make sure you have a way to access them, 

@@ -1,4 +1,3 @@
-// Path: admin/js/shortcode-wizard.js
 document.addEventListener('DOMContentLoaded', function () {
     if (typeof L === 'undefined') {
         console.error('Leaflet library is not loaded.');
@@ -8,12 +7,48 @@ document.addEventListener('DOMContentLoaded', function () {
     L.Icon.Default.imagePath = 'https://unpkg.com/leaflet@1.9.4/dist/images/';
 
     // Initialize Leaflet map for information shortcode
-    var map = L.map('map').setView([35.2, 25.1], 10);
+    if (typeof window.geotourMap !== 'undefined') {
+        window.geotourMap.remove();
+        delete window.geotourMap;
+    }
+
+    // Use default lat/lon from PHP, fallback if not available
+    const defaultLat = geotourSettings.defaultLat || '35.035557';
+    const defaultLon = geotourSettings.defaultLon || '24.789770';
+
+    // --- UPDATES START HERE ---
+
+    // 1. Set the input field values on page load.
+    document.getElementById('lat').value = defaultLat;
+    document.getElementById('lon').value = defaultLon;
+
+    // 2. Update the preview URL.  We need to construct it dynamically.
+    function updatePreviewUrl() {
+        const apiKey = geotourSettings.apiKey;
+        const lat = document.getElementById('lat').value;
+        const lon = document.getElementById('lon').value;
+        const radius = document.getElementById('radius').value;
+        const maxItems = document.getElementById('max-items').value;
+        const categories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(el => el.value).join(',');
+        const language = document.getElementById('language').value; // Get selected language
+
+
+        const apiUrl = `https://www.geotour.gr/wp-json/panotours/v2/listings?language=${language}&lat=${lat}&lon=${lon}&radius=${radius}&category=${categories}&items=${maxItems}&apikey=${apiKey}`;
+        document.getElementById('preview-container').setAttribute('data-apiurl', apiUrl);
+    }
+
+    updatePreviewUrl(); // Call it once on load.
+    generateShortcode(); //Also generate shortcode and make the preview on load
+
+
+    // --- UPDATES END HERE ---
+
+    window.geotourMap = L.map('map').setView([defaultLat, defaultLon], 10);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+    }).addTo(window.geotourMap);
 
-    var marker = L.marker([35.2, 25.1], { draggable: true }).addTo(map);
+    var marker = L.marker([defaultLat, defaultLon], { draggable: true }).addTo(window.geotourMap);
     marker.on('dragend', function (e) {
         var latlng = marker.getLatLng();
         document.getElementById('lat').value = latlng.lat;
@@ -21,19 +56,27 @@ document.addEventListener('DOMContentLoaded', function () {
         debounceGenerateShortcode();
     });
 
-    var mapEvents = L.map('map-events').setView([35.2, 25.1], 10);
+    // Initialize Leaflet map for events shortcode
+    if (typeof window.geotourMapEvents !== 'undefined') {
+        window.geotourMapEvents.remove();
+        delete window.geotourMapEvents;
+    }
+     // Use default lat/lon from PHP, fallback if not available
+    const defaultLatEvents = geotourSettings.defaultLat || '35.035557';
+    const defaultLonEvents = geotourSettings.defaultLon || '24.789770';
+
+    window.geotourMapEvents = L.map('map-events').setView([defaultLatEvents, defaultLonEvents], 10);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(mapEvents);
+    }).addTo(window.geotourMapEvents);
 
-    var markerEvents = L.marker([35.2, 25.1], { draggable: true }).addTo(mapEvents);
+    var markerEvents = L.marker([defaultLatEvents, defaultLonEvents], { draggable: true }).addTo(window.geotourMapEvents);
     markerEvents.on('dragend', function (e) {
         var latlng = markerEvents.getLatLng();
         document.getElementById('lat-events').value = latlng.lat;
         document.getElementById('lon-events').value = latlng.lng;
         debounceGenerateShortcodeEvents();
     });
-
 
     // Copy shortcode functionality
     const copyButton = document.getElementById('copy-shortcode');
@@ -63,7 +106,8 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('generated-shortcode').value = shortcode;
 
         // Fetch and display data in the preview container
-        var apiUrl = `https://www.geotour.gr/wp-json/panotours/v2/listings?language=${language}&lat=${lat}&lon=${lon}&radius=${radius}&category=${categories}&items=${maxItems}&apikey=${geotourSettings.apiKey}`;
+        // var apiUrl = `https://www.geotour.gr/wp-json/panotours/v2/listings?language=${language}&lat=${lat}&lon=${lon}&radius=${radius}&category=${categories}&items=${maxItems}&apikey=${geotourSettings.apiKey}`; //OLD
+        var apiUrl = document.getElementById('preview-container').getAttribute('data-apiurl'); // Get the URL from the data attribute
         fetch(apiUrl)
             .then(response => response.json())
             .then(data => {
@@ -131,7 +175,10 @@ document.addEventListener('DOMContentLoaded', function () {
     var debounceTimer;
     function debounceGenerateShortcode() {
         clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(generateShortcode, 2000);
+        debounceTimer = setTimeout(() => {
+            updatePreviewUrl(); // Update preview URL before fetching
+            generateShortcode();
+        }, 2000);
     }
 
     var debounceTimerEvents;
@@ -155,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('events-tab').style.display = 'none';
         document.getElementById('information-tab-link').classList.add('nav-tab-active');
         document.getElementById('events-tab-link').classList.remove('nav-tab-active');
-        map.invalidateSize(); // Ensure the map is resized correctly
+        window.geotourMap.invalidateSize(); // Ensure the map is resized correctly
     });
 
     document.getElementById('events-tab-link').addEventListener('click', function (e) {
@@ -164,11 +211,38 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('events-tab').style.display = 'block';
         document.getElementById('information-tab-link').classList.remove('nav-tab-active');
         document.getElementById('events-tab-link').classList.add('nav-tab-active');
-        mapEvents.invalidateSize(); // Ensure the map is resized correctly
+        window.geotourMapEvents.invalidateSize(); // Ensure the map is resized correctly
     });
 
     // Initialize the default tab
     document.getElementById('information-tab').style.display = 'block';
     document.getElementById('events-tab').style.display = 'none';
-    map.invalidateSize(); // Ensure the map is resized correctly on load
+    window.geotourMap.invalidateSize(); // Ensure the map is resized correctly on load
+
+    // Add event listener for the "Set Default Location" button
+    document.getElementById('set-default-location').addEventListener('click', function() {
+        const lat = marker.getLatLng().lat;
+        const lon = marker.getLatLng().lng;
+
+        fetch(ajaxurl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                action: 'geotour_set_default_location',
+                lat: lat,
+                lon: lon,
+                _wpnonce: geotourSettings.nonce
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Default location updated successfully!');
+            } else {
+                alert('Failed to update default location.');
+            }
+        });
+    });
 });

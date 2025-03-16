@@ -61,6 +61,8 @@ Please check the plugin page https://www.geotour.gr/about-geotour/geotour-share-
    [screenshot-2.png]
 
 == Changelog ==
+= 1.4.0 =
+* Added the ability to change the default map location of the wizard in the admin page
 = 1.3.0 =
 * Significant changes in the wizard styling to provide a more user friendly experience
 = 1.2.1 =

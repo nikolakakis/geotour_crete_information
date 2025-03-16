@@ -24,6 +24,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (/* binding */ EVENTS)
 /* harmony export */ });
+// /src/modules/events.js
 class EVENTS {
   constructor() {
     // Get shortcode parameters (make sure you have a way to access them, 

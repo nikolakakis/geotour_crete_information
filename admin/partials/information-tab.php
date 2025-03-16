@@ -15,6 +15,8 @@
 
         <div class="geotour-step">
             <h3>Step 1 (REQUIRED). Choose a point</h3>
+            <button type="button" id="set-default-location" class="geotour-default-location-button">Set Default Location</button> 
+            <span style="margin-left: 20px;">If you want to set a new default location, change the map pin in the map below and click on the button.</span>
             <div id="map" class="geotour-map-container"></div>
         </div>
 
@@ -73,12 +75,12 @@
                 </label>
             </div>
         </div>
-        <div class="geotour-step">
+        <div class="geotour-step step3-container">
            <h3>Step 3. Other parameters</h3>
            <div class="geotour-chosen-point-container">
-             <label for="lat">Chosen Point:</label>
-             <input type="text" id="lat" name="lat" value="35.2" required disabled>
-             <input type="text" id="lon" name="lon" value="25.1" required disabled>
+              <label for="lat">Chosen Point:</label>
+              <input type="text" id="lat" name="lat" value="35.2" required disabled>
+              <input type="text" id="lon" name="lon" value="25.1" required disabled>
           </div>
 
           <div class="geotour-other-inputs">
