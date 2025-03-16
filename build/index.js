@@ -175,7 +175,7 @@ class POIS {
     }
   }
   getPOIData() {
-    const url = `${this.apiUrl}&radius=${this.radius}&items=${this.items}`;
+    const url = `${this.apiUrl}`;
     console.log("API URL:", url);
     fetch(url).then(response => {
       if (!response.ok) {

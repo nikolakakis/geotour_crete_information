@@ -1,6 +1,6 @@
 {
   "name": "geotour-crete-information",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "WordPress plugin that fetches and displays information about Crete from the Geotour API using shortcodes.",
   "main": "src/index.js",
   "scripts": {
