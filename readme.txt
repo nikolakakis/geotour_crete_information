@@ -89,10 +89,8 @@ Please check the plugin page https://www.geotour.gr/about-geotour/geotour-share-
 == TODO ==
 * Implement alternative display options for categories needing admission and working hours (like museums).
 * Location details: Show detailed information about specific locations, including descriptions, images, and contact details.
-* Implement caching to improve performance.
-* Create alternative display formats that are more suitable for sidebars.
 * Add an include and exclude parameters to force exclude or include a particular place, despite the distance from the position set in the lat and lon
-* Translate the plugin into other languages.
+
 
 == Under Consideration ==
-* Interactive maps: Display maps the markers for various locations in Crete.
+* Alternative way to serve one location with extended text and a photo gallery
