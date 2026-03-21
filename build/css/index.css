@@ -1,3 +1,4 @@
+@charset "UTF-8";
 .geotour-container {
   background-color: white;
 }
@@ -136,18 +137,78 @@
 .pois-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 10px;
+  gap: 20px;
 }
 .pois-container .poi-item {
-  background: #eee;
-  padding: 6px;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.3s ease;
+}
+.pois-container .poi-item:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+.pois-container .poi-item:hover .poi-image-wrapper img {
+  transform: scale(1.08); /* Hover zoom */
+}
+.pois-container .poi-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+.pois-container h3 {
+  margin: 0 0 10px 0;
+  line-height: 1.3;
 }
 .pois-container h3 a {
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   text-decoration: none;
+  color: #222;
+  transition: color 0.2s;
+}
+.pois-container h3 a:hover {
+  color: #0073aa;
 }
 .pois-container .poi-excerpt {
-  font-size: 1rem;
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.6;
+  margin: 0 0 20px 0;
+  flex-grow: 1;
+}
+.pois-container .poi-btn-wrapper {
+  margin-top: auto; /* Pushes button to bottom */
+}
+.pois-container .poi-action-btn {
+  display: inline-flex;
+  align-items: center;
+  background: #f0f4f8;
+  color: #0073aa;
+  padding: 10px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none !important;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+.pois-container .poi-action-btn .poi-btn-icon {
+  margin-left: 8px;
+  transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.pois-container .poi-action-btn:hover {
+  background: #0073aa;
+  color: white;
+  box-shadow: 0 4px 10px rgba(0, 115, 170, 0.2);
+}
+.pois-container .poi-action-btn:hover .poi-btn-icon {
+  transform: translateX(4px);
 }
 .pois-container .poi-image-wrapper {
   position: relative;
@@ -163,26 +224,33 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1); /* Zoom transition */
 }
 .pois-container .poi-categories {
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0) 100%);
   color: white;
-  padding: 5px;
-  font-size: 14px;
+  padding: 20px 12px 10px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 .pois-container .poi-distance {
   position: absolute;
-  top: 5px;
-  right: 5px;
-  background-color: rgba(0, 0, 0, 0.5);
+  top: 12px;
+  right: 12px;
+  background-color: rgba(0, 0, 0, 0.65);
   color: white;
-  padding: 3px 8px;
+  padding: 4px 10px;
   font-size: 12px;
-  border-radius: 3px;
+  font-weight: 600;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* --- Level 2 Lightbox Modal --- */
@@ -208,6 +276,21 @@
   visibility: visible;
 }
 
+.geotour-modal-overlay.active .geotour-modal-content {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+.geotour-modal-overlay.closing {
+  opacity: 0;
+  visibility: visible; /* keep visible while fading */
+}
+
+.geotour-modal-overlay.closing .geotour-modal-content {
+  transform: translateY(-20px) scale(0.95);
+  opacity: 0;
+}
+
 .geotour-modal-content {
   background: #fff;
   width: 90%;
@@ -215,8 +298,9 @@
   max-height: 90vh;
   border-radius: 12px;
   position: relative;
-  transform: translateY(30px) scale(0.98);
-  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  transform: translateY(30px) scale(0.95);
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.4s ease;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
@@ -226,10 +310,6 @@
   .geotour-modal-content {
     flex-direction: row;
   }
-}
-
-.geotour-modal-overlay.active .geotour-modal-content {
-  transform: translateY(0) scale(1);
 }
 
 .geotour-modal-close {
@@ -286,6 +366,7 @@
   scroll-snap-align: center;
   height: 100%;
   position: relative;
+  transition: opacity 0.3s ease;
 }
 .geotour-modal-gallery .slide img {
   width: 100%;
@@ -293,6 +374,7 @@
   object-fit: contain; /* Don't crop heavily for modal */
   background: #111;
   display: block;
+  transition: transform 0.3s ease;
 }
 .geotour-modal-gallery .slider-nav {
   position: absolute;
@@ -311,16 +393,71 @@
   color: #333;
   border: none;
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 18px;
+  width: 44px;
+  height: 44px;
+  font-size: 20px;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  transition: all 0.2s;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
-.geotour-modal-gallery .slider-nav button:hover {
+.geotour-modal-gallery .slider-nav button:hover:not(.disabled) {
   background: #fff;
-  transform: scale(1.05);
+  transform: scale(1.15);
+  color: #0073aa;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+.geotour-modal-gallery .slider-nav button:active:not(.disabled) {
+  transform: scale(0.95);
+}
+.geotour-modal-gallery .slider-nav button.disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none !important;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: none;
+}
+.geotour-modal-gallery .slider-counter {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 5;
+  backdrop-filter: blur(4px);
+}
+.geotour-modal-gallery .slider-pagination {
+  position: absolute;
+  bottom: 15px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  z-index: 5;
+  pointer-events: none;
+}
+.geotour-modal-gallery .slider-pagination .slider-dot {
+  pointer-events: auto;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  transition: all 0.3s;
+}
+.geotour-modal-gallery .slider-pagination .slider-dot.active {
+  background: #fff;
+  transform: scale(1.3);
 }
 
 .geotour-modal-details {
@@ -375,19 +512,37 @@
 }
 .geotour-modal-details .btn-read-more {
   display: inline-flex;
+  align-items: center;
+  gap: 8px;
   background: #0073aa;
   color: #fff;
-  padding: 12px 24px;
-  border-radius: 6px;
+  padding: 14px 28px;
+  border-radius: 8px;
   text-decoration: none !important;
   font-weight: 600;
-  transition: background 0.3s, transform 0.2s;
+  font-size: 1.05rem;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
   box-shadow: 0 4px 10px rgba(0, 115, 170, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+.geotour-modal-details .btn-read-more::after {
+  content: "↗";
+  font-size: 1.1rem;
+  transition: transform 0.3s ease;
 }
 .geotour-modal-details .btn-read-more:hover {
   background: #005177;
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 115, 170, 0.4);
   color: #fff;
+}
+.geotour-modal-details .btn-read-more:hover::after {
+  transform: translate(3px, -3px);
+}
+.geotour-modal-details .btn-read-more:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 5px rgba(0, 115, 170, 0.3);
 }
 
 #geotour-events-container {
