@@ -5,7 +5,7 @@ Banner Image: banner-772x250.png
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.1.0;
+Stable tag: 1.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,14 @@ Please check the plugin page https://www.geotour.gr/about-geotour/geotour-share-
    [screenshot-2.png]
 
 == Changelog ==
+= 1.5.0 =
+* Implemented distinct information access levels (Level 1 and Level 2) based on the subscription tier data provided by the API endpoint.
+* Level 1 Access: Introduced a new "Quick Info" modal for Point of Interest (POI) items, accessible via a "€" overlay button for quick checks on Pricing, Working Hours, and Notes.
+* Level 2 Access: Added robust support for complete location details, handled via a rich Lightbox Explorer modal featuring an image gallery slider and fully-formatted extended descriptions.
+* Added an interactive, tabbed display for location Price, Working Hours, and Special Notes sourced directly from nested Geotour REST API parameters.
+* Re-engineered the layout to use a globally centered modal window, fixing CSS grid clipping issues and ensuring proper behavior on mobile devices.
+* SCSS refactoring: split large frontend stylesheets into modular components for improved future maintainability.
+* Enhanced popup typography and visual scale for dramatically better readability.
 = 1.4.1 =
 * Fix issues that prevented the fetching of the proper number of items from the Geotour REST endpoint
 = 1.4.0 =
@@ -87,7 +95,6 @@ Please check the plugin page https://www.geotour.gr/about-geotour/geotour-share-
 * Initial release.
 
 == TODO ==
-* Implement alternative display options for categories needing admission and working hours (like museums).
 * Location details: Show detailed information about specific locations, including descriptions, images, and contact details.
 * Add an include and exclude parameters to force exclude or include a particular place, despite the distance from the position set in the lat and lon
 
