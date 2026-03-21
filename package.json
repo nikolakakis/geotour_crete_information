@@ -4,8 +4,8 @@
   "description": "WordPress plugin that fetches and displays information about Crete from the Geotour API using shortcodes.",
   "main": "src/index.js",
   "scripts": {
-    "build": "wp-scripts build && sass ./sass/style.scss ./build/css/index.css",
-    "start": "wp-scripts start && sass --watch ./sass:./build/css",
+    "build": "wp-scripts build && sass ./sass/main.scss ./build/css/index.css",
+    "start": "wp-scripts start && sass --watch ./sass/main.scss:./build/css/index.css",
     "dev": "wp-scripts start",
     "devFast": "wp-scripts start",
     "test": "echo \"Error: no test specified\" && exit 1"

@@ -1,3 +1,73 @@
 .geotour-container {
     background-color: white;       
 }
+
+/* --- Layout Options --- */
+.layout-cols-auto { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important; }
+.layout-cols-2 { grid-template-columns: repeat(2, 1fr) !important; }
+.layout-cols-3 { grid-template-columns: repeat(3, 1fr) !important; }
+.layout-cols-4 { grid-template-columns: repeat(4, 1fr) !important; }
+
+/* Responsive adjustments for fixed columns */
+@media (max-width: 900px) {
+    .layout-cols-3, .layout-cols-4 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important; }
+}
+@media (max-width: 600px) {
+    .layout-cols-2 { grid-template-columns: 1fr !important; }
+}
+
+/* --- Spacing Options --- */
+.gap-small { gap: 10px !important; }
+.gap-medium { gap: 30px !important; }
+.gap-large { gap: 50px !important; }
+
+/* --- Theme Options (Cards) --- */
+.theme-card > * {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.05);
+    overflow: hidden;
+}
+
+.theme-card > *:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.theme-dark > * {
+    background: #2a2a2a;
+    color: #f1f1f1;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* --- Animation Options --- */
+@keyframes gtSlideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes gtFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.anim-slide-up > * {
+    opacity: 0;
+    animation: gtSlideUp 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+.anim-fade > * {
+    opacity: 0;
+    animation: gtFadeIn 0.8s ease-out forwards;
+}
+
+/* Stagger animations for consecutive children */
+.poi-item:nth-child(1), .geotour-event:nth-child(1) { animation-delay: 0.1s; }
+.poi-item:nth-child(2), .geotour-event:nth-child(2) { animation-delay: 0.2s; }
+.poi-item:nth-child(3), .geotour-event:nth-child(3) { animation-delay: 0.3s; }
+.poi-item:nth-child(4), .geotour-event:nth-child(4) { animation-delay: 0.4s; }
+.poi-item:nth-child(5), .geotour-event:nth-child(5) { animation-delay: 0.5s; }
+.poi-item:nth-child(6), .geotour-event:nth-child(6) { animation-delay: 0.6s; }

@@ -9,6 +9,10 @@ function geotour_information_html( $atts ) {
         'lat'       => '',
         'lon'       => '',
         'radius'    => 10,
+        'columns'   => 'auto',
+        'theme'     => 'card',
+        'animation' => 'slide-up',
+        'gap'       => 'medium',
     ), $atts, 'geotour-information' );
 
     // Generate a unique ID for the container
@@ -30,8 +34,9 @@ function geotour_information_html( $atts ) {
     $api_url .= "&category=" . urlencode( $atts['category'] );
     $api_url .= "&apikey=" . urlencode( $api_key );
 
+    $container_classes = "pois-container pois-grid layout-cols-" . esc_attr($atts['columns']) . " theme-" . esc_attr($atts['theme']) . " anim-" . esc_attr($atts['animation']) . " gap-" . esc_attr($atts['gap']);
 
-    $output = '<div id="' . $container_id . '" class="pois-container pois-grid" data-apiurl="' . esc_attr( $api_url ) . '"></div>';
+    $output = '<div id="' . $container_id . '" class="' . $container_classes . '" data-apiurl="' . esc_attr( $api_url ) . '"></div>';
 
     // Use wp_localize_script to pass data. This is generally better.
     wp_localize_script( 'geotour-shared-content-script', 'geotour_api_data_' . $container_id, array(  // Unique object name
@@ -52,6 +57,10 @@ function geotour_events_shortcode( $atts ) {
             'lon'       => '24.684551', // Default longitude
             'radius'    => '10',       // Default radius in km
             'max-items' => '6',        // Default maximum items
+            'columns'   => 'auto',
+            'theme'     => 'card',
+            'animation' => 'slide-up',
+            'gap'       => 'medium',
         ),
         $atts,
         'geotour_events'
@@ -69,6 +78,7 @@ function geotour_events_shortcode( $atts ) {
     wp_localize_script( 'geotour-shared-content-script', 'geotourEventsParams_' . $container_id, $atts ); // Unique object name
 
 	// Output a container for the events (you can customize this)
-    return '<div id="' . $container_id. '"></div>';
+    $container_classes = "geotour-events-container layout-cols-" . esc_attr($atts['columns']) . " theme-" . esc_attr($atts['theme']) . " anim-" . esc_attr($atts['animation']) . " gap-" . esc_attr($atts['gap']);
+    return '<div id="' . $container_id. '" class="' . $container_classes . '"></div>';
 }
 add_shortcode( 'geotour_events', 'geotour_events_shortcode' );
