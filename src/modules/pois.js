@@ -83,35 +83,40 @@ class POIS{
                 
                 // Append popover to body to bypass all layout limits
                 let popoverHtml = `
-                <div class="poi-quick-info-popover" id="quick-info-popover-${index}">
-                    <div class="popover-overlay-backdrop"></div>
-                    <div class="quick-info-tabs">
-                        ${price || pricesNotes ? `<button class="tab-btn active" data-tab="price-${index}">Price</button>` : ''}
-                        ${workingTime ? `<button class="tab-btn ${!(price || pricesNotes) ? 'active' : ''}" data-tab="hours-${index}">Hours</button>` : ''}
-                        ${openingHoursNotes ? `<button class="tab-btn ${!(price || pricesNotes) && !workingTime ? 'active' : ''}" data-tab="special-${index}">Notes</button>` : ''}
-                    </div>
-                    <div class="quick-info-content">
-                        ${price || pricesNotes ? `
-                        <div class="tab-pane active" id="price-${index}">
-                            ${price ? `<strong>Price:</strong> ${price}<br>` : ''}
-                            ${pricesNotes ? `<span>${pricesNotes}</span>` : ''}
-                        </div>
-                        ` : ''}
-                        ${workingTime ? `
-                        <div class="tab-pane ${!(price || pricesNotes) ? 'active' : ''}" id="hours-${index}">
-                            ${workingTime}
-                        </div>
-                        ` : ''}
-                        ${openingHoursNotes ? `
-                        <div class="tab-pane ${!(price || pricesNotes) && !workingTime ? 'active' : ''}" id="special-${index}">
-                            ${openingHoursNotes}
-                        </div>
-                        ` : ''}
-                    </div>
-                    <span class="close-popover" aria-label="Close">×</span>
-                </div>
-                `;
-                // Wait for DOM parsing
+                  <div class="poi-quick-info-popover" id="quick-info-popover-${index}">
+                      <div class="popover-overlay-backdrop"></div>
+                      <div class="quick-info-window">
+                          <div class="quick-info-header">
+                              <h4 class="quick-info-title">${poi.title}</h4>
+                              <button class="close-popover" aria-label="Close">×</button>
+                          </div>
+                          <div class="quick-info-tabs">
+                              ${price || pricesNotes ? `<button class="tab-btn active" data-tab="price-${index}">Price</button>` : ''}
+                              ${workingTime ? `<button class="tab-btn ${!(price || pricesNotes) ? 'active' : ''}" data-tab="hours-${index}">Hours</button>` : ''}
+                              ${openingHoursNotes ? `<button class="tab-btn ${!(price || pricesNotes) && !workingTime ? 'active' : ''}" data-tab="special-${index}">Notes</button>` : ''}
+                          </div>
+                          <div class="quick-info-content">
+                              ${price || pricesNotes ? `
+                              <div class="tab-pane active" id="price-${index}">
+                                  ${price ? `<strong>Price:</strong> ${price}<br>` : ''}
+                                  ${pricesNotes ? `<span>${pricesNotes}</span>` : ''}
+                              </div>
+                              ` : ''}
+                              ${workingTime ? `
+                              <div class="tab-pane ${!(price || pricesNotes) ? 'active' : ''}" id="hours-${index}">
+                                  ${workingTime}
+                              </div>
+                              ` : ''}
+                              ${openingHoursNotes ? `
+                              <div class="tab-pane ${!(price || pricesNotes) && !workingTime ? 'active' : ''}" id="special-${index}">
+                                  ${openingHoursNotes}
+                              </div>
+                              ` : ''}
+                          </div>
+                      </div>
+                  </div>
+                  `;
+                  // Wait for DOM parsing
                 let popoverContainer = document.getElementById('geotour-popovers-container');
                 if(!popoverContainer) {
                     popoverContainer = document.createElement('div');
@@ -203,13 +208,16 @@ class POIS{
         });
 
         // Close when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.poi-quick-info-popover') && !e.target.closest('.poi-quick-info-btn')) {
-                document.querySelectorAll('.poi-quick-info-popover').forEach(popover => {
-                    popover.classList.remove('open');
-                });
-            }
-        });
+          document.addEventListener('click', (e) => {
+              if (
+                 e.target.classList.contains('popover-overlay-backdrop') || 
+                 (!e.target.closest('.quick-info-window') && !e.target.closest('.poi-quick-info-btn'))
+              ) {
+                  document.querySelectorAll('.poi-quick-info-popover').forEach(popover => {
+                      popover.classList.remove('open');
+                  });
+              }
+          });
     }
 
     createModalContainer() {
