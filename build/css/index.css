@@ -185,6 +185,211 @@
   border-radius: 3px;
 }
 
+/* --- Level 2 Lightbox Modal --- */
+.geotour-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 999999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s;
+  backdrop-filter: blur(5px);
+}
+
+.geotour-modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.geotour-modal-content {
+  background: #fff;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  border-radius: 12px;
+  position: relative;
+  transform: translateY(30px) scale(0.98);
+  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+@media (min-width: 768px) {
+  .geotour-modal-content {
+    flex-direction: row;
+  }
+}
+
+.geotour-modal-overlay.active .geotour-modal-content {
+  transform: translateY(0) scale(1);
+}
+
+.geotour-modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.3s;
+}
+.geotour-modal-close:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.geotour-modal-gallery {
+  position: relative;
+  width: 100%;
+  height: 300px;
+  background: #000;
+}
+@media (min-width: 768px) {
+  .geotour-modal-gallery {
+    width: 55%;
+    height: auto;
+    min-height: 500px;
+  }
+}
+.geotour-modal-gallery .slider-container {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  height: 100%;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  /* Safari and Chrome */
+}
+.geotour-modal-gallery .slider-container::-webkit-scrollbar {
+  display: none;
+}
+.geotour-modal-gallery .slide {
+  flex: 0 0 100%;
+  scroll-snap-align: center;
+  height: 100%;
+  position: relative;
+}
+.geotour-modal-gallery .slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Don't crop heavily for modal */
+  background: #111;
+  display: block;
+}
+.geotour-modal-gallery .slider-nav {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+  pointer-events: none;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+.geotour-modal-gallery .slider-nav button {
+  pointer-events: auto;
+  background: rgba(255, 255, 255, 0.8);
+  color: #333;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s;
+}
+.geotour-modal-gallery .slider-nav button:hover {
+  background: #fff;
+  transform: scale(1.05);
+}
+
+.geotour-modal-details {
+  padding: 30px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+@media (min-width: 768px) {
+  .geotour-modal-details {
+    width: 45%;
+    max-height: 90vh; /* Match modal container max height */
+  }
+}
+.geotour-modal-details .modal-tags {
+  font-size: 0.85rem;
+  color: #0073aa;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+.geotour-modal-details .modal-title {
+  font-size: 1.8rem;
+  margin: 0 0 10px;
+  line-height: 1.2;
+  color: #222;
+}
+.geotour-modal-details .modal-meta {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 25px;
+  display: flex;
+  gap: 15px;
+}
+.geotour-modal-details .modal-meta span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.geotour-modal-details .modal-desc {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #444;
+  margin-bottom: 30px;
+}
+.geotour-modal-details .modal-desc p {
+  margin-bottom: 15px;
+}
+.geotour-modal-details .modal-desc p:last-child {
+  margin-bottom: 0;
+}
+.geotour-modal-details .btn-read-more {
+  display: inline-flex;
+  background: #0073aa;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 6px;
+  text-decoration: none !important;
+  font-weight: 600;
+  transition: background 0.3s, transform 0.2s;
+  box-shadow: 0 4px 10px rgba(0, 115, 170, 0.3);
+}
+.geotour-modal-details .btn-read-more:hover {
+  background: #005177;
+  transform: translateY(-2px);
+  color: #fff;
+}
+
 #geotour-events-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));

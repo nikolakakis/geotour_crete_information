@@ -40,7 +40,9 @@ class POIS{
                 return response.json();
             })
             .then(data => {
-                this.displayPOIs(data);   
+                this.poisData = data;
+                this.displayPOIs(data); 
+                this.attachModalEvents();
             })
             .catch(error => {
                 console.error("Error fetching POI data:", error);
@@ -50,23 +52,126 @@ class POIS{
 
     displayPOIs(pois) {
         let html = "";
-        pois.forEach(poi => {
+        pois.forEach((poi, index) => {
+            const hasPremiumData = poi.description || (poi.media_files && poi.media_files.length > 0);
+            const linkClass = hasPremiumData ? 'geotour-poi-link premium-trigger' : 'geotour-poi-link';
+            
             html += `
             <div class="poi-item">
-                <a target="_blank" href="${poi.url}">
+                <a class="${linkClass}" target="_blank" href="${poi.url}" data-index="${index}">
                 <div class="poi-image-wrapper"> 
-                    <img src="${poi.listingsThumbUrl}" alt="${poi.title} featured image">
+                    <img src="${poi.listingsThumbUrl}" alt="${poi.title} featured image" loading="lazy">
                     <div class="poi-categories">${poi.listingCategory.map(cat => cat.name).join(', ')}</div>
                     <div class="poi-distance">${poi.distance} km</div>
                 </div>
                 </a>
-                <h3><a target="_blank" href="${poi.url}">${poi.title}</a></h3>
+                <h3><a class="${linkClass}" target="_blank" href="${poi.url}" data-index="${index}">${poi.title}</a></h3>
                 <p class="poi-excerpt">${poi.excerpt}</p> 
             </div>
             `; 
         });
 
         this.container.innerHTML = html;
+        this.createModalContainer();
+    }
+
+    createModalContainer() {
+        if (!document.getElementById('geotour-modal-overlay')) {
+            const modalHTML = `
+                <div id="geotour-modal-overlay" class="geotour-modal-overlay">
+                    <div class="geotour-modal-content">
+                        <button class="geotour-modal-close" aria-label="Close modal">&times;</button>
+                        <div id="geotour-modal-gallery" class="geotour-modal-gallery"></div>
+                        <div class="geotour-modal-details">
+                            <div id="geotour-modal-tags" class="modal-tags"></div>
+                            <h2 id="geotour-modal-title" class="modal-title"></h2>
+                            <div class="modal-meta">
+                                <span id="geotour-modal-distance"></span>
+                            </div>
+                            <div id="geotour-modal-desc" class="modal-desc"></div>
+                            <a id="geotour-modal-link" href="#" target="_blank" class="btn-read-more" rel="noopener noreferrer">Find out more</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+            document.querySelector('.geotour-modal-close').addEventListener('click', () => {
+                document.getElementById('geotour-modal-overlay').classList.remove('active');
+            });
+            document.getElementById('geotour-modal-overlay').addEventListener('click', (e) => {
+                if (e.target.id === 'geotour-modal-overlay') {
+                    document.getElementById('geotour-modal-overlay').classList.remove('active');
+                }
+            });
+            
+            // Slider Global Navigation Actions
+            document.addEventListener('click', (e) => {
+                if(e.target.closest('.slider-nav-prev')) {
+                    const slider = document.querySelector('.slider-container');
+                    if(slider) slider.scrollBy({ left: -slider.clientWidth, behavior: 'smooth' });
+                }
+                if(e.target.closest('.slider-nav-next')) {
+                    const slider = document.querySelector('.slider-container');
+                    if(slider) slider.scrollBy({ left: slider.clientWidth, behavior: 'smooth' });
+                }
+            });
+        }
+    }
+
+    attachModalEvents() {
+        const triggers = this.container.querySelectorAll('.premium-trigger');
+        triggers.forEach(trigger => {
+            trigger.addEventListener('click', (e) => {
+                e.preventDefault(); // Stop standard navigation
+                const index = trigger.getAttribute('data-index');
+                const poi = this.poisData[index];
+                this.openModal(poi);
+            });
+        });
+    }
+
+    openModal(poi) {
+        // Populate modal data
+        document.getElementById('geotour-modal-title').textContent = poi.title;
+        document.getElementById('geotour-modal-tags').textContent = poi.listingCategory ? poi.listingCategory.map(cat => cat.name).join(' • ') : '';
+        document.getElementById('geotour-modal-distance').innerHTML = `📍 ${poi.distance} km away`;
+        
+        // Handle descriptions
+        const descHTML = poi.description ? poi.description : `<p>${poi.excerpt}</p>`;
+        document.getElementById('geotour-modal-desc').innerHTML = descHTML;
+        
+        document.getElementById('geotour-modal-link').href = poi.url;
+
+        // Build Gallery
+        const galleryContainer = document.getElementById('geotour-modal-gallery');
+        let sliderHTML = '<div class="slider-container">';
+        
+        const mediaFiles = poi.media_files && poi.media_files.length > 0 ? poi.media_files : [{ large: poi.listingsThumbUrl, thumbnail: poi.listingsThumbUrl }];
+        
+        mediaFiles.forEach((media, i) => {
+            // Lazy load except for first image
+            sliderHTML += `
+                <div class="slide">
+                    <img src="${media.large}" alt="${poi.title} - Image ${i+1}" loading="${i === 0 ? 'eager' : 'lazy'}">
+                </div>
+            `;
+        });
+        sliderHTML += '</div>';
+
+        if (mediaFiles.length > 1) {
+            sliderHTML += `
+                <div class="slider-nav">
+                    <button class="slider-nav-prev" aria-label="Previous image">❮</button>
+                    <button class="slider-nav-next" aria-label="Next image">❯</button>
+                </div>
+            `;
+        }
+
+        galleryContainer.innerHTML = sliderHTML;
+
+        // Open Modal
+        document.getElementById('geotour-modal-overlay').classList.add('active');
     }
 }
 
