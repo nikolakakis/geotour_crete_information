@@ -156,8 +156,32 @@ function geotour_api_section_callback() {
 */
 function geotour_api_key_render() {
   $api_key = get_option('geotour_api_key');
+  
+  // Perform an authenticated test call in PHP to bypass CORS issues and reliably fetch the header
+  $tier_level = 1; // Default
+  $privilege_header = '';
+  
+  if (!empty($api_key)) {
+      $test_url = 'https://www.geotour.gr/wp-json/panotours/v2/listings?language=en&lat=35.035557&lon=24.789770&radius=30&category=pois&apikey=' . $api_key;
+      $response = wp_remote_head($test_url); // Retrieve headers via HEAD request efficiently
+      
+      if (!is_wp_error($response)) {
+          $privilege_header = wp_remote_retrieve_header($response, 'X-Geotour-Privilege-Level');
+          if (!empty($privilege_header)) {
+              $tier_level = intval($privilege_header);
+          }
+      }
+  }
+  
   ?>
-  <input type="text" name="geotour_api_key" value="<?php echo esc_attr($api_key); ?>" class="regular-text" />
+  <input type="text" name="geotour_api_key" value="<?php echo esc_attr($api_key); ?>" class="regular-text" id="geotour_api_key_input" />
+  <?php if (!empty($api_key) && !empty($privilege_header)): ?>
+      <span id="geotour_api_level_indicator" style="display: inline-flex; align-items: center; margin-left: 10px; padding: 4px 12px; border-radius: 4px; font-size: 13px; color: #fff; background-color: #1d2327; vertical-align: middle;">
+          API Level: <strong style="font-size: 18px; font-weight: bold; margin-left: 6px; line-height: 1;"><?php echo esc_html($tier_level); ?></strong>
+      </span>
+  <?php else: ?>
+      <span id="geotour_api_level_indicator" style="display: none; align-items: center; margin-left: 10px; padding: 4px 12px; border-radius: 4px; font-size: 13px; color: #fff; background-color: #1d2327; vertical-align: middle;"></span>
+  <?php endif; ?>
   <?php
 }
 

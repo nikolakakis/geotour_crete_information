@@ -106,10 +106,19 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('generated-shortcode').value = shortcode;
 
         // Fetch and display data in the preview container
-        // var apiUrl = `https://www.geotour.gr/wp-json/panotours/v2/listings?language=${language}&lat=${lat}&lon=${lon}&radius=${radius}&category=${categories}&items=${maxItems}&apikey=${geotourSettings.apiKey}`; //OLD
-        var apiUrl = document.getElementById('preview-container').getAttribute('data-apiurl'); // Get the URL from the data attribute
+        var apiUrl = document.getElementById('preview-container').getAttribute('data-apiurl');
         fetch(apiUrl)
-            .then(response => response.json())
+            .then(response => {
+                const privilegeLevel = response.headers.get('X-Geotour-Privilege-Level');
+                const indicator = document.getElementById('geotour_api_level_indicator');
+                
+                // Fallback check: if CORS allowed it through we can still update dynamically
+                if (indicator && privilegeLevel) {
+                    indicator.innerHTML = `API Level: <strong style="font-size: 18px; font-weight: bold; margin-left: 6px; line-height: 1;">${parseInt(privilegeLevel, 10)}</strong>`;
+                    indicator.style.display = 'inline-flex';
+                }
+                return response.json();
+            })
             .then(data => {
                 var html = '';
                 data.forEach(poi => {
