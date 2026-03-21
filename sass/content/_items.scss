@@ -92,7 +92,7 @@
 
     &:hover {
       background: #0073aa;
-      color: white;
+      color: #ffffff !important; /* Force white text on hover */
       box-shadow: 0 4px 10px rgba(0, 115, 170, 0.2);
       .poi-btn-icon {
         transform: translateX(4px);
@@ -113,6 +113,7 @@
       left: 0;
       width: 100%;
       height: 100%;
+      margin: 0 !important; /* Force reset unwanted margin calculated by themes/p tags */
       object-fit: cover;
       transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1); /* Zoom transition */
     }
