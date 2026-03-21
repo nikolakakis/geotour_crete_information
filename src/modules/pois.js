@@ -52,13 +52,78 @@ class POIS{
 
     displayPOIs(pois) {
         let html = "";
+        
+        // Ensure popover container is completely clean before rendering new ones
+        let existContainer = document.getElementById('geotour-popovers-container');
+        if (existContainer) {
+            existContainer.innerHTML = ''; // reset completely on fetching
+        }
+
         pois.forEach((poi, index) => {
             const hasPremiumData = poi.description || (poi.media_files && poi.media_files.length > 0);
             const linkClass = hasPremiumData ? 'geotour-poi-link premium-trigger' : 'geotour-poi-link';
             const buttonText = hasPremiumData ? 'View Details' : 'View on Geotour';
             
+            // Extract nested fields safely and trim whitespace/empty values
+            const price = (poi.listingfields?.price?.[0] || '').trim();
+            const pricesNotes = (poi.listingfields?.prices_notes?.[0] || '').trim();
+            const workingTime = (poi.listingfields?.working_time?.[0] || '').trim();
+            const openingHoursNotes = (poi.listingfields?.opening_hours_notes?.[0] || '').trim();
+
+            // Build the quick info button and popover content
+            let quickInfoHtml = '';
+            if (price.length > 0 || pricesNotes.length > 0 || workingTime.length > 0 || openingHoursNotes.length > 0) {
+                quickInfoHtml = `
+                    <div class="poi-quick-info">
+                        <button class="poi-quick-info-btn" aria-label="Quick Information" data-index="${index}">
+                            €
+                        </button>
+                    </div>
+                `;
+                
+                // Append popover to body to bypass all layout limits
+                let popoverHtml = `
+                <div class="poi-quick-info-popover" id="quick-info-popover-${index}">
+                    <div class="popover-overlay-backdrop"></div>
+                    <div class="quick-info-tabs">
+                        ${price || pricesNotes ? `<button class="tab-btn active" data-tab="price-${index}">Price</button>` : ''}
+                        ${workingTime ? `<button class="tab-btn ${!(price || pricesNotes) ? 'active' : ''}" data-tab="hours-${index}">Hours</button>` : ''}
+                        ${openingHoursNotes ? `<button class="tab-btn ${!(price || pricesNotes) && !workingTime ? 'active' : ''}" data-tab="special-${index}">Notes</button>` : ''}
+                    </div>
+                    <div class="quick-info-content">
+                        ${price || pricesNotes ? `
+                        <div class="tab-pane active" id="price-${index}">
+                            ${price ? `<strong>Price:</strong> ${price}<br>` : ''}
+                            ${pricesNotes ? `<span>${pricesNotes}</span>` : ''}
+                        </div>
+                        ` : ''}
+                        ${workingTime ? `
+                        <div class="tab-pane ${!(price || pricesNotes) ? 'active' : ''}" id="hours-${index}">
+                            ${workingTime}
+                        </div>
+                        ` : ''}
+                        ${openingHoursNotes ? `
+                        <div class="tab-pane ${!(price || pricesNotes) && !workingTime ? 'active' : ''}" id="special-${index}">
+                            ${openingHoursNotes}
+                        </div>
+                        ` : ''}
+                    </div>
+                    <span class="close-popover" aria-label="Close">×</span>
+                </div>
+                `;
+                // Wait for DOM parsing
+                let popoverContainer = document.getElementById('geotour-popovers-container');
+                if(!popoverContainer) {
+                    popoverContainer = document.createElement('div');
+                    popoverContainer.id = 'geotour-popovers-container';
+                    document.body.appendChild(popoverContainer);
+                }
+                popoverContainer.insertAdjacentHTML('beforeend', popoverHtml);
+            }
+
             html += `
-            <div class="poi-item">
+            <div class="poi-item" style="position: relative;">
+                ${quickInfoHtml}
                 <div class="poi-image-wrapper"> 
                     <a class="${linkClass}" target="_blank" href="${poi.url}" data-index="${index}">
                         <img src="${poi.listingsThumbUrl}" alt="${poi.title} featured image" loading="lazy">
@@ -81,6 +146,70 @@ class POIS{
 
         this.container.innerHTML = html;
         this.createModalContainer();
+        this.attachQuickInfoEvents();
+    }
+
+    attachQuickInfoEvents() {
+        const triggers = this.container.querySelectorAll('.poi-quick-info-btn');
+        triggers.forEach(trigger => {
+            trigger.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const index = trigger.getAttribute('data-index');
+                const targetPopover = document.getElementById(`quick-info-popover-${index}`);
+                
+                // Close any open popovers...
+                document.querySelectorAll('.poi-quick-info-popover').forEach(popover => {
+                    if (popover !== targetPopover) {
+                        popover.classList.remove('open');
+                    }
+                });
+
+                // Toggle current popover
+                if (targetPopover) {
+                    targetPopover.classList.toggle('open');
+                }
+            });
+        });
+
+        const closeBtns = document.querySelectorAll('.close-popover');
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                btn.closest('.poi-quick-info-popover').classList.remove('open');
+            });
+        });
+
+        // Tab switching logic
+        const tabBtns = document.querySelectorAll('.poi-quick-info-popover .tab-btn');
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const popover = btn.closest('.poi-quick-info-popover');
+                const targetId = btn.getAttribute('data-tab');
+
+                // Reset active tabs
+                popover.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+                popover.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+
+                // Set new active
+                btn.classList.add('active');
+                popover.querySelector(`#${targetId}`).classList.add('active');
+            });
+        });
+
+        // Close when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.poi-quick-info-popover') && !e.target.closest('.poi-quick-info-btn')) {
+                document.querySelectorAll('.poi-quick-info-popover').forEach(popover => {
+                    popover.classList.remove('open');
+                });
+            }
+        });
     }
 
     createModalContainer() {

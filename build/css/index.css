@@ -144,17 +144,18 @@
   display: flex;
   flex-direction: column;
   border-radius: 12px;
-  overflow: hidden;
+  position: relative;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
   border: 1px solid rgba(0, 0, 0, 0.05);
   transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.3s ease;
+  overflow: visible !important;
 }
 .pois-container .poi-item:hover {
   transform: translateY(-6px);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
 }
 .pois-container .poi-item:hover .poi-image-wrapper img {
-  transform: scale(1.08); /* Hover zoom */
+  transform: scale(1.08);
 }
 .pois-container .poi-content {
   padding: 20px;
@@ -183,7 +184,7 @@
   flex-grow: 1;
 }
 .pois-container .poi-btn-wrapper {
-  margin-top: auto; /* Pushes button to bottom */
+  margin-top: auto;
 }
 .pois-container .poi-action-btn {
   display: inline-flex;
@@ -204,7 +205,7 @@
 }
 .pois-container .poi-action-btn:hover {
   background: #0073aa;
-  color: #ffffff !important; /* Force white text on hover */
+  color: #ffffff !important;
   box-shadow: 0 4px 10px rgba(0, 115, 170, 0.2);
 }
 .pois-container .poi-action-btn:hover .poi-btn-icon {
@@ -216,6 +217,7 @@
   padding-bottom: 56.25%;
   height: 0;
   overflow: hidden;
+  border-radius: 12px 12px 0 0;
 }
 .pois-container .poi-image-wrapper img {
   position: absolute;
@@ -223,9 +225,9 @@
   left: 0;
   width: 100%;
   height: 100%;
-  margin: 0 !important; /* Force reset unwanted margin calculated by themes/p tags */
+  margin: 0 !important;
   object-fit: cover;
-  transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1); /* Zoom transition */
+  transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
 }
 .pois-container .poi-categories {
   position: absolute;
@@ -254,6 +256,149 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* --- Quick Info Popover --- */
+.poi-quick-info {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 1000;
+  overflow: visible !important;
+}
+.poi-quick-info .poi-quick-info-btn {
+  background-color: rgba(0, 115, 170, 0.9);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+}
+.poi-quick-info .poi-quick-info-btn:hover {
+  transform: scale(1.1);
+  background-color: #0073aa;
+}
+
+.poi-quick-info-popover {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  z-index: 9999999;
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 12px;
+  width: 500px;
+  max-width: 90vw;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+}
+.poi-quick-info-popover.open {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+}
+.poi-quick-info-popover::before {
+  content: "";
+  position: fixed;
+  top: -100vh;
+  left: -100vw;
+  right: -100vw;
+  bottom: -100vh;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: -1;
+  border-radius: 0;
+  pointer-events: none;
+}
+.poi-quick-info-popover .close-popover {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-size: 18px;
+  color: #777;
+  cursor: pointer;
+  line-height: 1;
+  z-index: 5;
+  transition: color 0.2s;
+}
+.poi-quick-info-popover .close-popover:hover {
+  color: #d32f2f;
+}
+.poi-quick-info-popover .quick-info-tabs {
+  display: flex;
+  background: #f5f7f9;
+  border-bottom: 1px solid #eaeaea;
+}
+.poi-quick-info-popover .quick-info-tabs .tab-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  padding: 10px 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.poi-quick-info-popover .quick-info-tabs .tab-btn.active {
+  background: #fff;
+  color: #0073aa;
+  border-bottom: 2px solid #0073aa;
+}
+.poi-quick-info-popover .quick-info-tabs .tab-btn:hover:not(.active) {
+  background: #eef1f5;
+}
+.poi-quick-info-popover .quick-info-content {
+  padding: 15px;
+  font-size: 13px;
+  color: #333;
+  line-height: 1.5;
+  min-height: 80px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+.poi-quick-info-popover .quick-info-content .tab-pane {
+  display: none;
+  animation: fade-in 0.3s ease;
+}
+.poi-quick-info-popover .quick-info-content .tab-pane.active {
+  display: block;
+}
+.poi-quick-info-popover .quick-info-content .tab-pane strong {
+  color: #0073aa;
+}
+.poi-quick-info-popover .quick-info-content .tab-pane span {
+  display: block;
+  margin-top: 5px;
+  color: #666;
+}
+.poi-quick-info-popover .quick-info-content .tab-pane ul {
+  margin: 5px 0 0 0;
+  padding-left: 20px;
+}
+.poi-quick-info-popover .quick-info-content .tab-pane ul li {
+  margin-bottom: 4px;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 /* --- Level 2 Lightbox Modal --- */
 .geotour-modal-overlay {
   position: fixed;
@@ -284,7 +429,7 @@
 
 .geotour-modal-overlay.closing {
   opacity: 0;
-  visibility: visible; /* keep visible while fading */
+  visibility: visible;
 }
 
 .geotour-modal-overlay.closing .geotour-modal-content {
@@ -355,9 +500,8 @@
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   height: 100%;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-  /* Safari and Chrome */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 .geotour-modal-gallery .slider-container::-webkit-scrollbar {
   display: none;
@@ -372,7 +516,7 @@
 .geotour-modal-gallery .slide img {
   width: 100%;
   height: 100%;
-  object-fit: contain; /* Don't crop heavily for modal */
+  object-fit: contain;
   background: #111;
   display: block;
   transition: transform 0.3s ease;
@@ -470,7 +614,7 @@
 @media (min-width: 768px) {
   .geotour-modal-details {
     width: 45%;
-    max-height: 90vh; /* Match modal container max height */
+    max-height: 90vh;
   }
 }
 .geotour-modal-details .modal-tags {
