@@ -6,12 +6,15 @@
 
 function geotour_shared_content_enqueue_scripts() {
 
+    $build_css_ver = filemtime( plugin_dir_path( __FILE__ ) . '../build/index.css' );
+    $build_js_ver = filemtime( plugin_dir_path( __FILE__ ) . '../build/index.js' );
+
     // Enqueue the CSS file
     wp_enqueue_style(
         'geotour-shared-content-styles',
         plugin_dir_url( __FILE__ ) . '../build/index.css', // Correct relative path
         array(),
-        '1.2.1',
+        $build_css_ver,
         'all'
     );
 
@@ -20,7 +23,7 @@ function geotour_shared_content_enqueue_scripts() {
         'geotour-shared-content-script',
         plugin_dir_url( __FILE__ ) . '../build/index.js', // Correct relative path
         array('jquery'),
-        '1.2.1',
+        $build_js_ver,
         true
     );
 

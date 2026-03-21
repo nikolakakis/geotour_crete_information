@@ -24,10 +24,16 @@ function geotour_admin_enqueue_scripts($hook) {
       if ('toplevel_page_geotour-crete-information' === $hook) {
         wp_enqueue_style('leaflet-css', 'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css', array(), '1.9.4');
         wp_enqueue_script('leaflet-js', 'https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js', array(), '1.9.4', true);
-        wp_enqueue_script('geotour-shortcode-wizard', plugin_dir_url(__FILE__) . 'js/shortcode-wizard.js', array('jquery', 'leaflet-js'), '1.0.0', true);
-        wp_enqueue_style('geotour-admin-styles', plugin_dir_url(__FILE__) . 'css/admin-styles.css', array(), '1.0.0');
-        wp_enqueue_script('geotour-index', plugin_dir_url(__FILE__) . '../build/index.js', array('jquery'), '1.0.0', true);
-        wp_enqueue_style('geotour-index-styles', plugin_dir_url(__FILE__) . '../build/index.css', array(), '1.0.0');
+        
+        $wizard_js_ver = filemtime(plugin_dir_path(__FILE__) . 'js/shortcode-wizard.js');
+        $admin_css_ver = filemtime(plugin_dir_path(__FILE__) . 'css/admin-styles.css');
+        $build_js_ver = filemtime(plugin_dir_path(__FILE__) . '../build/index.js');
+        $build_css_ver = filemtime(plugin_dir_path(__FILE__) . '../build/index.css');
+
+        wp_enqueue_script('geotour-shortcode-wizard', plugin_dir_url(__FILE__) . 'js/shortcode-wizard.js', array('jquery', 'leaflet-js'), $wizard_js_ver, true);
+        wp_enqueue_style('geotour-admin-styles', plugin_dir_url(__FILE__) . 'css/admin-styles.css', array(), $admin_css_ver);
+        wp_enqueue_script('geotour-index', plugin_dir_url(__FILE__) . '../build/index.js', array('jquery'), $build_js_ver, true);
+        wp_enqueue_style('geotour-index-styles', plugin_dir_url(__FILE__) . '../build/index.css', array(), $build_css_ver);
     
         $api_key = get_option('geotour_api_key');
             $default_lat = get_option('geotour_default_lat', '35.035557');
