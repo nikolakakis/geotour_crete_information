@@ -1,0 +1,111 @@
+# Geotour API Plugin: Architecture Migration & Refinement Report
+
+## 1. Executive Summary
+This document outlines the required architectural shift for the Geotour API Plugin. To ensure seamless distribution to third-party servers while maintaining strict "API Key + Domain" validation, the data-fetching mechanism must transition from **Client-Side JavaScript (`fetch`)** to a **Server-Side PHP Proxy**. 
+
+This transition eliminates the reliance on third-party server configurations (Nginx/Apache CORS policies) and prevents the exposure of API keys in the browser.
+
+---
+
+## 2. The Current Problem: Client-Side Limitations
+Currently, the plugin relies on the user's browser to send a request directly to `geotour.gr`.
+
+*   **The CORS Bottleneck:** Browsers enforce Cross-Origin Resource Sharing (CORS). This often triggers preflight `OPTIONS` requests. If the plugin user's server or the data server is not configured perfectly, the request is blocked.
+*   **Referer Stripping:** The `geotour.gr` API validates the API Key against the requesting Domain (Origin/Referer). Modern server security defaults (like strict `Referrer-Policy`) often strip these headers before the request leaves the user's browser. The API then rejects the valid request with a `403 Forbidden` because it cannot verify the domain.
+*   **Security Risk:** The API key is fully visible in the public-facing `index.js` file. A malicious user could copy the key, spoof the Referer from a custom backend, and steal the data feed.
+
+---
+
+## 3. The Solution: Server-Side PHP Proxy
+To make the plugin "plug and play" for any user, the data fetching must be handled by the user's WordPress backend, not their visitor's browser.
+
+### The New Data Flow
+1.  **Browser → Local Server:** The frontend JS makes a request to a local custom REST API endpoint on the user's own WordPress site (e.g., `[theirsite.com/wp-json/geotour/v1/places](https://theirsite.com/wp-json/geotour/v1/places)`). 
+    *   *Result: Zero CORS issues, as the request is same-origin.*
+2.  **Local Server → Geotour Server:** The local WordPress endpoint uses `wp_remote_get()` to securely fetch the data from `geotour.gr`.
+    *   *Result: Bypasses browser restrictions entirely.*
+3.  **Authentication:** The PHP script explicitly injects the user's Domain and API Key into the request headers. 
+    *   *Result: The API key remains hidden on the server, and the Referer is guaranteed to be sent, satisfying the validation pair.*
+
+---
+
+## 4. Implementation Roadmap
+
+### Step 1: Register a Local WordPress REST Endpoint
+In the plugin's core PHP file, register a new route that the frontend JS can call.
+
+```php
+add_action( 'rest_api_init', function () {
+    register_rest_route( 'geotour/v1', '/listings', array(
+        'methods' => 'GET',
+        'callback' => 'geotour_fetch_listings_proxy',
+        'permission_callback' => '__return_true' // Allow public frontend access
+    ) );
+} );
+```
+
+### Step 2: Build the PHP Proxy Callback
+This function will execute the server-to-server request. It fetches the saved API key from the WordPress database, explicitly sets the Domain as the Referer, and securely contacts `geotour.gr`.
+
+```php
+function geotour_fetch_listings_proxy( $request ) {
+    // 1. Get parameters from the local JS request
+    $lat = $request->get_param('lat');
+    $lon = $request->get_param('lon');
+    $category = $request->get_param('category');
+    
+    // 2. Retrieve the hidden API key from the WP options table
+    $api_key = get_option('geotour_api_key'); 
+    
+    // 3. Build the target URL
+    $target_url = "https://www.geotour.gr/wp-json/panotours/v2/listings?items=12&language=en&lat={$lat}&lon={$lon}&radius=10&category={$category}";
+
+    // 4. Make the secure server-to-server request
+    $response = wp_remote_get( $target_url, array(
+        'timeout'     => 15,
+        'headers'     => array(
+            'Referer'   => home_url(), // Explicitly sets the domain for validation
+            'X-API-Key' => $api_key    // Pass key in header (recommended) or URL
+        )
+    ) );
+
+    // 5. Handle errors
+    if ( is_wp_error( $response ) ) {
+        return new WP_Error( 'geotour_error', 'Failed to connect to data server', array( 'status' => 500 ) );
+    }
+
+    $body = wp_remote_retrieve_body( $response );
+    $data = json_decode( $body );
+
+    // 6. Return data back to the frontend JS
+    return rest_ensure_response( $data );
+}
+```
+
+### Step 3: Update Frontend JavaScript (`index.js`)
+Modify the `fetch()` call to point to the new local endpoint instead of the external `geotour.gr` URL. The API key is completely removed from the JavaScript.
+
+```javascript
+// The API URL is now the local site's own REST endpoint
+const localApiUrl = `/wp-json/geotour/v1/listings?lat=${lat}&lon=${lon}&category=${category}`;
+
+fetch(localApiUrl)
+    .then(response => {
+        if (!response.ok) throw new Error('Network response was not ok');
+        return response.json();
+    })
+    .then(data => {
+        // Render data on the map/page
+    })
+    .catch(error => console.error('Error fetching POI data:', error));
+```
+
+### Step 4: Update Geotour Data Server Validation
+Ensure that the `geotour.gr` API endpoint is configured to look for the API Key and the Referer sent by the `wp_remote_get` headers. Because the request originates from a PHP server, browser-based CORS (`OPTIONS` requests) will no longer apply, making the data delivery faster and more reliable.
+
+---
+
+## 5. Security & Maintenance Benefits
+*   **Absolute Domain Validation:** Because the PHP proxy defines the `Referer` header programmatically via `home_url()`, the data server will *always* receive the correct domain name to validate against the API key pair.
+*   **Key Protection:** The API key is stored securely in the WordPress database (accessed via `get_option()`) and never exposed to the public internet, preventing unauthorized scrapers from stealing the key.
+*   **Zero Configuration Support:** Users installing this plugin will not need to modify `.htaccess` or Nginx vhost configurations. The plugin will work immediately upon activation and API key entry.

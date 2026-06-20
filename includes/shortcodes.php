@@ -22,17 +22,15 @@ function geotour_information_html( $atts ) {
         return '<p class="geotour-warning">Please provide latitude and longitude using the <code>lat</code> and <code>lon</code> attributes.</p>';
     }
 
-    $api_key = get_option( 'geotour_api_key' );
-
-    // Construct the API URL carefully
-    $api_url = "https://www.geotour.gr/wp-json/panotours/v2/listings";
-    $api_url .= "?items=" . urlencode( $atts['max-items'] );
-    $api_url .= "&language=en";
-    $api_url .= "&lat=" . urlencode( $atts['lat'] );
-    $api_url .= "&lon=" . urlencode( $atts['lon'] );
-    $api_url .= "&radius=" . urlencode( $atts['radius'] );
-    $api_url .= "&category=" . urlencode( $atts['category'] );
-    $api_url .= "&apikey=" . urlencode( $api_key );
+    // Construct the local proxy API URL
+    $api_url = get_rest_url( null, 'geotour/v1/listings' );
+    $api_url = add_query_arg( array(
+        'items'    => $atts['max-items'],
+        'lat'      => $atts['lat'],
+        'lon'      => $atts['lon'],
+        'radius'   => $atts['radius'],
+        'category' => $atts['category'],
+    ), $api_url );
 
     $container_classes = "pois-container pois-grid layout-cols-" . esc_attr($atts['columns']) . " theme-" . esc_attr($atts['theme']) . " anim-" . esc_attr($atts['animation']) . " gap-" . esc_attr($atts['gap']);
 

@@ -7,7 +7,8 @@ export default class EVENTS {
       this.userLng = parseFloat(geotourEventsParams.lon);
       this.radius = parseFloat(geotourEventsParams.radius); 
   
-      this.apiUrl = 'https://www.geotour.gr/wp-json/tribe/events/v1/events';
+      // Use local properties or window vars if available, fallback to proxy endpoint
+      this.apiUrl = '/wp-json/geotour/v1/events';
       this.fetchEvents();
     }
   

@@ -14,6 +14,7 @@
 require_once plugin_dir_path( __FILE__ ) . 'includes/scripts.php';
 require_once plugin_dir_path( __FILE__ ) . 'admin/admin-settings.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/shortcodes.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/api.php';
 
 // If this file is called directly, abort.
 if ( ! defined( 'WPINC' ) ) {
