@@ -1,13 +1,13 @@
 // /src/modules/events.js
 export default class EVENTS {
     constructor() {
-      // Get shortcode parameters (make sure you have a way to access them, 
-      // e.g., using wp_localize_script as mentioned before)
-      this.userLat = parseFloat(geotourEventsParams.lat);  
+      this.container = document.querySelector('.geotour-events-container');
+      if (!this.container) return;
+
+      this.userLat = parseFloat(geotourEventsParams.lat);
       this.userLng = parseFloat(geotourEventsParams.lon);
-      this.radius = parseFloat(geotourEventsParams.radius); 
-  
-      // Use local properties or window vars if available, fallback to proxy endpoint
+      this.radius = parseFloat(geotourEventsParams.radius);
+
       this.apiUrl = '/wp-json/geotour/v1/events';
       this.fetchEvents();
     }
@@ -46,8 +46,7 @@ export default class EVENTS {
         return distance <= this.radius;
       });
   
-      // Generate HTML to display filteredEvents
-      const eventsContainer = document.getElementById('geotour-events-container'); // Replace with your actual container ID
+      const eventsContainer = this.container;
       if (eventsContainer) {
         eventsContainer.innerHTML = ''; // Clear previous content
        
