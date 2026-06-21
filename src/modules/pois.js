@@ -5,11 +5,11 @@ var thelang = document.getElementsByTagName('html')[0].getAttribute('lang');
 document.addEventListener('DOMContentLoaded', (event) => {
     const poiContainers = document.querySelectorAll('.pois-container');
     poiContainers.forEach(container => {
-        // Get the container ID from the localized data
-        const containerId = container.id; 
-
-        // Initialize POIS with the container ID
-        new POIS(containerId); 
+        const containerId = container.id;
+        const instance = new POIS(containerId);
+        if (containerId === 'preview-container') {
+            window.geotourAdminPreview = instance;
+        }
     });
 });
 
@@ -19,10 +19,11 @@ class POIS{
         this.container = document.getElementById(containerId); 
 
         // Check if the container element exists before accessing its dataset
-        if (this.container) { 
+        if (this.container) {
             this.apiUrl = this.container.dataset.apiurl;
-            this.radius = this.container.dataset.radius || 10; // Default radius
-            this.items = this.container.dataset.items || 12; // Default items
+            this.radius = this.container.dataset.radius || 10;
+            this.items = this.container.dataset.items || 12;
+            this.primaryColor = getComputedStyle(this.container).getPropertyValue('--geotour-primary').trim() || '#0073aa';
             this.getPOIData();
         } else {
             //console.error('POIS container element not found:', containerId);
@@ -37,17 +38,34 @@ class POIS{
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
+                const privilegeLevel = response.headers.get('X-Geotour-Privilege-Level');
+                if (privilegeLevel) {
+                    const indicator = document.getElementById('geotour_api_level_indicator');
+                    if (indicator) {
+                        indicator.innerHTML = `API Level: <strong style="font-size: 18px; font-weight: bold; margin-left: 6px; line-height: 1;">${parseInt(privilegeLevel, 10)}</strong>`;
+                        indicator.style.display = 'inline-flex';
+                    }
+                }
                 return response.json();
             })
             .then(data => {
                 this.poisData = data;
-                this.displayPOIs(data); 
+                this.displayPOIs(data);
                 this.attachModalEvents();
             })
             .catch(error => {
                 console.error("Error fetching POI data:", error);
                 this.container.innerHTML = "<p>Error loading POIs.</p>";
             });
+    }
+
+    refresh(url, color) {
+        if (url) this.apiUrl = url;
+        if (color) {
+            this.primaryColor = color;
+            this.container.style.setProperty('--geotour-primary', color);
+        }
+        this.getPOIData();
     }
 
     displayPOIs(pois) {
@@ -116,7 +134,6 @@ class POIS{
                       </div>
                   </div>
                   `;
-                  // Wait for DOM parsing
                 let popoverContainer = document.getElementById('geotour-popovers-container');
                 if(!popoverContainer) {
                     popoverContainer = document.createElement('div');
@@ -124,6 +141,10 @@ class POIS{
                     document.body.appendChild(popoverContainer);
                 }
                 popoverContainer.insertAdjacentHTML('beforeend', popoverHtml);
+                const insertedPopover = document.getElementById(`quick-info-popover-${index}`);
+                if (insertedPopover) {
+                    insertedPopover.style.setProperty('--geotour-primary', this.primaryColor);
+                }
             }
 
             html += `
@@ -371,6 +392,9 @@ class POIS{
             // Listen to scroll to seamlessly update UI during touch swiping and clicking bounds
             sliderContainer.addEventListener('scroll', updateSliderState, { passive: true });
         }
+
+        // Apply primary color to modal (it lives on body, outside the container)
+        document.getElementById('geotour-modal-overlay').style.setProperty('--geotour-primary', this.primaryColor);
 
         // Open Modal
         document.getElementById('geotour-modal-overlay').classList.add('active');

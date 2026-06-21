@@ -101,47 +101,18 @@ document.addEventListener('DOMContentLoaded', function () {
             return el.value;
         }).join(',');
         var language = document.getElementById('language').value;
+        var color = document.getElementById('primary-color').value;
 
-        var shortcode = `[geotour-information category="${categories}" lat="${lat}" lon="${lon}" max-items="${maxItems}" radius="${radius}" language="${language}"]`;
+        var shortcode = `[geotour-information category="${categories}" lat="${lat}" lon="${lon}" max-items="${maxItems}" radius="${radius}" language="${language}" color="${color}"]`;
         document.getElementById('generated-shortcode').value = shortcode;
 
-        // Fetch and display data in the preview container
         var apiUrl = document.getElementById('preview-container').getAttribute('data-apiurl');
-        fetch(apiUrl)
-            .then(response => {
-                const privilegeLevel = response.headers.get('X-Geotour-Privilege-Level');
-                const indicator = document.getElementById('geotour_api_level_indicator');
-                
-                // Fallback check: if CORS allowed it through we can still update dynamically
-                if (indicator && privilegeLevel) {
-                    indicator.innerHTML = `API Level: <strong style="font-size: 18px; font-weight: bold; margin-left: 6px; line-height: 1;">${parseInt(privilegeLevel, 10)}</strong>`;
-                    indicator.style.display = 'inline-flex';
-                }
-                return response.json();
-            })
-            .then(data => {
-                var html = '';
-                data.forEach(poi => {
-                    html += `
-                        <div class="poi-item">
-                            <a target="_blank" href="${poi.url}">
-                                <div class="poi-image-wrapper">
-                                    <img src="${poi.listingsThumbUrl}" alt="${poi.title} featured image">
-                                    <div class="poi-categories">${poi.listingCategory.map(cat => cat.name).join(', ')}</div>
-                                    <div class="poi-distance">${poi.distance} km</div>
-                                </div>
-                            </a>
-                            <h3><a target="_blank" href="${poi.url}">${poi.title}</a></h3>
-                            <p class="poi-excerpt">${poi.excerpt}</p>
-                        </div>
-                    `;
-                });
-                document.getElementById('preview-container').innerHTML = html;
-            })
-            .catch(error => {
-                console.error('Error fetching POI data:', error);
-                document.getElementById('preview-container').innerHTML = '<p>Error loading POIs.</p>';
-            });
+
+        if (window.geotourAdminPreview) {
+            window.geotourAdminPreview.refresh(apiUrl, color);
+        } else {
+            document.getElementById('preview-container').innerHTML = '<p>Loading preview...</p>';
+        }
     }
 
     function generateShortcodeEvents() {

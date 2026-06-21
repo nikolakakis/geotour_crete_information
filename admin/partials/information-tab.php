@@ -94,6 +94,9 @@
               <select id="language" name="language">
                   <option value="en">English</option>
               </select>
+
+              <label for="primary-color">Primary Color:</label>
+              <input type="color" id="primary-color" name="primary-color" value="#0073aa">
           </div>
       </div>
     </form>

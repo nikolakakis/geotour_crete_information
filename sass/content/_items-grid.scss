@@ -57,7 +57,7 @@
       transition: color 0.2s;
       
       &:hover {
-        color: #0073aa;
+        color: var(--geotour-primary, #0073aa);
       }
     }
   }
@@ -78,7 +78,7 @@
     display: inline-flex;
     align-items: center;
     background: #f0f4f8;
-    color: #0073aa;
+    color: var(--geotour-primary, #0073aa);
     padding: 10px 18px;
     font-size: 0.9rem;
     font-weight: 600;
@@ -93,7 +93,7 @@
     }
 
     &:hover {
-      background: #0073aa;
+      background: var(--geotour-primary, #0073aa);
       color: #ffffff !important; 
       box-shadow: 0 4px 10px rgba(0, 115, 170, 0.2);
       .poi-btn-icon {

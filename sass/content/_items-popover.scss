@@ -8,7 +8,7 @@
   overflow: visible !important;
 
   .poi-quick-info-btn {
-    background-color: rgba(0, 115, 170, 0.9);
+    background-color: color-mix(in srgb, var(--geotour-primary, #0073aa) 90%, transparent);
     color: white;
     border: 2px solid rgba(255, 255, 255, 0.8);
     width: 36px;
@@ -26,7 +26,7 @@
 
     &:hover {
       transform: scale(1.1);
-      background-color: #0073aa;
+      background-color: var(--geotour-primary, #0073aa);
     }
   }
 }
@@ -123,8 +123,8 @@
         transition: all 0.2s;
         &.active {
           background: #fff;
-          color: #0073aa;
-          border-bottom: 2px solid #0073aa;
+          color: var(--geotour-primary, #0073aa);
+          border-bottom: 2px solid var(--geotour-primary, #0073aa);
         }
         &:hover:not(.active) { background: #eef1f5; }
       }
@@ -143,7 +143,7 @@
         display: none;
         animation: fade-in 0.3s ease;
         &.active { display: block; }
-        strong { color: #0073aa; font-weight: 600; }
+        strong { color: var(--geotour-primary, #0073aa); font-weight: 600; }
         span { display: block; margin-top: 8px; color: #555; }
         ul {
           margin: 10px 0 0 0;

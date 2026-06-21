@@ -13,6 +13,7 @@ function geotour_information_html( $atts ) {
         'theme'     => 'card',
         'animation' => 'slide-up',
         'gap'       => 'medium',
+        'color'     => '#0073aa',
     ), $atts, 'geotour-information' );
 
     // Generate a unique ID for the container
@@ -22,25 +23,21 @@ function geotour_information_html( $atts ) {
         return '<p class="geotour-warning">Please provide latitude and longitude using the <code>lat</code> and <code>lon</code> attributes.</p>';
     }
 
-    // Construct the local proxy API URL
-    $api_url = get_rest_url( null, 'geotour/v1/listings' );
-    $api_url = add_query_arg( array(
-        'items'    => $atts['max-items'],
-        'lat'      => $atts['lat'],
-        'lon'      => $atts['lon'],
-        'radius'   => $atts['radius'],
-        'category' => $atts['category'],
-    ), $api_url );
+    $color   = sanitize_hex_color( $atts['color'] ) ?: '#0073aa';
+    $api_key = get_option( 'geotour_api_key' );
+
+    $api_url  = 'https://www.geotour.gr/wp-json/panotours/v2/listings';
+    $api_url .= '?items='    . urlencode( $atts['max-items'] );
+    $api_url .= '&language=en';
+    $api_url .= '&lat='      . urlencode( $atts['lat'] );
+    $api_url .= '&lon='      . urlencode( $atts['lon'] );
+    $api_url .= '&radius='   . urlencode( $atts['radius'] );
+    $api_url .= '&category=' . urlencode( $atts['category'] );
+    $api_url .= '&apikey='   . urlencode( $api_key );
 
     $container_classes = "pois-container pois-grid layout-cols-" . esc_attr($atts['columns']) . " theme-" . esc_attr($atts['theme']) . " anim-" . esc_attr($atts['animation']) . " gap-" . esc_attr($atts['gap']);
 
-    $output = '<div id="' . $container_id . '" class="' . $container_classes . '" data-apiurl="' . esc_attr( $api_url ) . '"></div>';
-
-    // Use wp_localize_script to pass data. This is generally better.
-    wp_localize_script( 'geotour-shared-content-script', 'geotour_api_data_' . $container_id, array(  // Unique object name
-        'apiUrl'      => $api_url,
-        'containerId' => $container_id,
-    ) );
+    $output = '<div id="' . $container_id . '" class="' . $container_classes . '" data-apiurl="' . esc_attr( $api_url ) . '" style="--geotour-primary: ' . esc_attr( $color ) . '"></div>';
 
     return $output;
 }
@@ -71,9 +68,6 @@ function geotour_events_shortcode( $atts ) {
     $maxItems  = intval( $atts['max-items'] );
 
 	$container_id = 'geotour-events-container-' . uniqid();
-
-    // Use wp_localize_script here as well.  Consistent data passing.
-    wp_localize_script( 'geotour-shared-content-script', 'geotourEventsParams_' . $container_id, $atts ); // Unique object name
 
 	// Output a container for the events (you can customize this)
     $container_classes = "geotour-events-container layout-cols-" . esc_attr($atts['columns']) . " theme-" . esc_attr($atts['theme']) . " anim-" . esc_attr($atts['animation']) . " gap-" . esc_attr($atts['gap']);
