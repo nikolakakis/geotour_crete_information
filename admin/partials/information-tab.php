@@ -8,7 +8,7 @@
     <div class="geotour-guidelines">
         <p>To use the wizard, you need to set the point on the map below first. From this point, all the listings from the selected categories that are within the specified radius will be displayed.</p>
         <p>The "Max Items" number determines the maximum number of listings that can be shown at a time.  The maximum number cannot exceed 20 per shortcode.</p>
-        <p>Language is currently limited to English.</p>
+        <p>Language applies site-wide, not per shortcode — set it under <a href="#geotour_content_language">Content Language</a> above.</p>
     </div>
 
     <form id="geotour-information-shortcode-form">
@@ -90,11 +90,6 @@
               <label for="max-items">Max Items:</label>
               <input type="number" id="max-items" name="max-items" value="12" required>
 
-              <label for="language">Language:</label>
-              <select id="language" name="language">
-                  <option value="en">English</option>
-              </select>
-
               <label for="primary-color">Primary Color:</label>
               <input type="color" id="primary-color" name="primary-color" value="#0073aa">
           </div>
@@ -111,6 +106,17 @@
     </div>
 
     <h2>Preview</h2>
-    <?php $api_key = get_option('geotour_api_key'); ?>
-    <div id="preview-container" class="pois-container" data-apiurl="https://www.geotour.gr/wp-json/panotours/v2/listings?language=en&lat=35.2&lon=25.1&radius=10&category=environment,fortifications,locations-areas&max-items=12&apikey=<?php echo esc_attr($api_key); ?>"></div>
+    <?php
+    $preview_api_url = add_query_arg(
+        array(
+            'lat'      => '35.2',
+            'lon'      => '25.1',
+            'radius'   => '10',
+            'category' => 'environment,fortifications,locations-areas',
+            'items'    => '12',
+        ),
+        rest_url( 'geotour/v1/listings' )
+    );
+    ?>
+    <div id="preview-container" class="pois-container" data-apiurl="<?php echo esc_url( $preview_api_url ); ?>"></div>
 </div>

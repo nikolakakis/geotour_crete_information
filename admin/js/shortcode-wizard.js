@@ -22,18 +22,17 @@ document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('lat').value = defaultLat;
     document.getElementById('lon').value = defaultLon;
 
-    // 2. Update the preview URL.  We need to construct it dynamically.
+    // 2. Update the preview URL — points at this site's own local proxy
+    // (geotourSettings.restUrl = geotour/v1/listings), which reads the API key
+    // and content language server-side. Neither ever reaches this page.
     function updatePreviewUrl() {
-        const apiKey = geotourSettings.apiKey;
         const lat = document.getElementById('lat').value;
         const lon = document.getElementById('lon').value;
         const radius = document.getElementById('radius').value;
         const maxItems = document.getElementById('max-items').value;
         const categories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(el => el.value).join(',');
-        const language = document.getElementById('language').value; // Get selected language
 
-
-        const apiUrl = `https://www.geotour.gr/wp-json/panotours/v2/listings?language=${language}&lat=${lat}&lon=${lon}&radius=${radius}&category=${categories}&items=${maxItems}&apikey=${apiKey}`;
+        const apiUrl = `${geotourSettings.restUrl}?lat=${lat}&lon=${lon}&radius=${radius}&category=${categories}&items=${maxItems}`;
         document.getElementById('preview-container').setAttribute('data-apiurl', apiUrl);
     }
 
@@ -100,10 +99,9 @@ document.addEventListener('DOMContentLoaded', function () {
         var categories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(function (el) {
             return el.value;
         }).join(',');
-        var language = document.getElementById('language').value;
         var color = document.getElementById('primary-color').value;
 
-        var shortcode = `[geotour-information category="${categories}" lat="${lat}" lon="${lon}" max-items="${maxItems}" radius="${radius}" language="${language}" color="${color}"]`;
+        var shortcode = `[geotour-information category="${categories}" lat="${lat}" lon="${lon}" max-items="${maxItems}" radius="${radius}" color="${color}"]`;
         document.getElementById('generated-shortcode').value = shortcode;
 
         var apiUrl = document.getElementById('preview-container').getAttribute('data-apiurl');
@@ -124,8 +122,9 @@ document.addEventListener('DOMContentLoaded', function () {
         var shortcode = `[geotour_events lat="${lat}" lon="${lon}" max-items="${maxItems}" radius="${radius}"]`;
         document.getElementById('generated-shortcode-events').value = shortcode;
 
-        // Fetch and display data in the preview container
-        var apiUrl = `https://www.geotour.gr/wp-json/tribe/events/v1/events?lat=${lat}&lon=${lon}&radius=${radius}&max-items=${maxItems}&apikey=${geotourSettings.apiKey}`;
+        // Fetch and display data in the preview container. No API key: events
+        // are always public (see includes/api.php's geotour_fetch_events_proxy()).
+        var apiUrl = `https://www.geotour.gr/wp-json/tribe/events/v1/events?lat=${lat}&lon=${lon}&radius=${radius}&max-items=${maxItems}`;
         fetch(apiUrl)
             .then(response => response.json())
             .then(data => {

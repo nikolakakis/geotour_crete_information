@@ -35,12 +35,15 @@ function geotour_admin_enqueue_scripts($hook) {
         wp_enqueue_script('geotour-index', plugin_dir_url(__FILE__) . '../build/index.js', array('jquery'), $build_js_ver, true);
         wp_enqueue_style('geotour-index-styles', plugin_dir_url(__FILE__) . '../build/index.css', array(), $build_css_ver);
     
-        $api_key = get_option('geotour_api_key');
-            $default_lat = get_option('geotour_default_lat', '35.035557');
+        $default_lat = get_option('geotour_default_lat', '35.035557');
             $default_lon = get_option('geotour_default_lon', '24.789770');
-    
+
+        // No API key here — it stays server-side (geotour_fetch_listings_proxy(),
+        // includes/api.php) and is never sent to the browser. restUrl points the
+        // wizard's live preview at that local proxy instead of building a
+        // geotour.gr URL with the key baked into it.
         wp_localize_script('geotour-shortcode-wizard', 'geotourSettings', array(
-          'apiKey' => $api_key,
+          'restUrl' => rest_url('geotour/v1/listings'),
           'nonce' => wp_create_nonce('geotour_set_default_location'),
                 'defaultLat' => $default_lat,
                 'defaultLon' => $default_lon
@@ -115,6 +118,20 @@ function geotour_check_api_key($api_key) {
 }
 
 /**
+ * Languages geotour.gr can return Information (listings) content in. A new
+ * language on the geotour.gr side (see geotour-translate/includes/class-gt-language.php)
+ * doesn't automatically appear here — add it to this list once it's live
+ * there, or hook geotour_crete_information_languages to add it without
+ * editing this file.
+ */
+function geotour_crete_information_supported_languages() {
+  return apply_filters( 'geotour_crete_information_languages', array(
+    'en' => 'English',
+    'el' => 'Ελληνικά (Greek)',
+  ) );
+}
+
+/**
 * Register the API key setting.
 */
 function geotour_plugin_settings() {
@@ -133,6 +150,11 @@ function geotour_plugin_settings() {
     'geotour_default_lon'
   );
 
+  register_setting(
+    'geotour_plugin_settings_group',
+    'geotour_content_language'
+  );
+
   add_settings_section(
     'geotour_api_section',      // Section ID
     'API Key Settings',       // Section title
@@ -147,8 +169,45 @@ function geotour_plugin_settings() {
     'geotour-crete-information',   // Page slug
     'geotour_api_section'      // Section ID
   );
+
+  add_settings_section(
+    'geotour_language_section',
+    'Content Language',
+    'geotour_language_section_callback',
+    'geotour-crete-information'
+  );
+
+  add_settings_field(
+    'geotour_content_language',
+    'Language',
+    'geotour_content_language_render',
+    'geotour-crete-information',
+    'geotour_language_section'
+  );
 }
 add_action('admin_init', 'geotour_plugin_settings');
+
+/**
+* Callback function for language section content.
+*/
+function geotour_language_section_callback() {
+  echo '<p>Language requested from Geotour for the Information (listings) shortcode. Applies site-wide — every [geotour-information] shortcode on this site uses the same language. Events are always in English for now.</p>';
+}
+
+/**
+* Callback function to render the language field.
+*/
+function geotour_content_language_render() {
+  $selected = get_option( 'geotour_content_language', 'en' );
+  $languages = geotour_crete_information_supported_languages();
+  ?>
+  <select name="geotour_content_language" id="geotour_content_language">
+    <?php foreach ( $languages as $code => $label ) : ?>
+      <option value="<?php echo esc_attr( $code ); ?>" <?php selected( $selected, $code ); ?>><?php echo esc_html( $label ); ?></option>
+    <?php endforeach; ?>
+  </select>
+  <?php
+}
 
 /**
 * Callback function for API key section content.

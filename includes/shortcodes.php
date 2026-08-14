@@ -23,17 +23,21 @@ function geotour_information_html( $atts ) {
         return '<p class="geotour-warning">Please provide latitude and longitude using the <code>lat</code> and <code>lon</code> attributes.</p>';
     }
 
-    $color   = sanitize_hex_color( $atts['color'] ) ?: '#0073aa';
-    $api_key = get_option( 'geotour_api_key' );
+    $color = sanitize_hex_color( $atts['color'] ) ?: '#0073aa';
 
-    $api_url  = 'https://www.geotour.gr/wp-json/panotours/v2/listings';
-    $api_url .= '?items='    . urlencode( $atts['max-items'] );
-    $api_url .= '&language=en';
-    $api_url .= '&lat='      . urlencode( $atts['lat'] );
-    $api_url .= '&lon='      . urlencode( $atts['lon'] );
-    $api_url .= '&radius='   . urlencode( $atts['radius'] );
-    $api_url .= '&category=' . urlencode( $atts['category'] );
-    $api_url .= '&apikey='   . urlencode( $api_key );
+    // Local proxy (includes/api.php:geotour_fetch_listings_proxy) — the API
+    // key and content language are read server-side from this plugin's own
+    // settings there, so neither one ever reaches this shortcode's HTML.
+    $api_url = add_query_arg(
+        array(
+            'items'    => rawurlencode( $atts['max-items'] ),
+            'lat'      => rawurlencode( $atts['lat'] ),
+            'lon'      => rawurlencode( $atts['lon'] ),
+            'radius'   => rawurlencode( $atts['radius'] ),
+            'category' => rawurlencode( $atts['category'] ),
+        ),
+        rest_url( 'geotour/v1/listings' )
+    );
 
     $container_classes = "pois-container pois-grid layout-cols-" . esc_attr($atts['columns']) . " theme-" . esc_attr($atts['theme']) . " anim-" . esc_attr($atts['animation']) . " gap-" . esc_attr($atts['gap']);
 

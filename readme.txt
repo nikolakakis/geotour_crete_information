@@ -5,7 +5,7 @@ Banner Image: banner-772x250.png
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.5.0
+Stable tag: 1.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,10 @@ Please check the plugin page https://www.geotour.gr/about-geotour/geotour-share-
    [screenshot-2.png]
 
 == Changelog ==
+= 1.6.0 =
+* Security: the Information (listings) shortcode, the admin preview, and the shortcode wizard all fetched geotour.gr directly with the API key visible in the page's HTML. All three now go through this plugin's own local proxy endpoint, so the key stays server-side and is never sent to visitors.
+* Added a Content Language setting (site-wide) so the Information shortcode can request Greek (or English) listings content from Geotour; more languages can be added as Geotour adds them.
+* Events shortcode continues to require no API key and stays in English for now.
 = 1.5.0 =
 * Implemented distinct information access levels (Level 1 and Level 2) based on the subscription tier data provided by the API endpoint.
 * Level 1 Access: Introduced a new "Quick Info" modal for Point of Interest (POI) items, accessible via a "€" overlay button for quick checks on Pricing, Working Hours, and Notes.
