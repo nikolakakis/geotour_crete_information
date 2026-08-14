@@ -49,8 +49,20 @@ function geotour_admin_enqueue_scripts($hook) {
                 'defaultLon' => $default_lon
         ));
     
-            // TEMPORARY FIX:  Define geotourEventsParams to prevent the error.
-            wp_localize_script('geotour-index', 'geotourEventsParams', array());
+            // Real defaults, matching events-tab.php's own static preview markup
+            // (35.2/25.1/10/12) — an empty object here (the previous "temporary
+            // fix") stopped the hard ReferenceError but left lat/lon/radius as
+            // undefined, so events.js's haversine check always evaluated to NaN
+            // (silently false) and the admin preview permanently showed "No
+            // events found" instead of ever actually rendering anything. Real
+            // values let the already-working proxy-backed EVENTS class populate
+            // this preview for real, same as it does on the public shortcode.
+            wp_localize_script('geotour-index', 'geotourEventsParams', array(
+                'lat' => '35.2',
+                'lon' => '25.1',
+                'radius' => '10',
+                'max-items' => '12',
+            ));
       }
     }
 
@@ -61,7 +73,6 @@ function geotour_plugin_options_page() {
   $api_key = get_option('geotour_api_key');
   $default_lat = get_option('geotour_default_lat', '35.035557');
   $default_lon = get_option('geotour_default_lon', '24.789770');
-  $api_key_valid = geotour_check_api_key($api_key); // Check API key validity
 
   ?>
   <div class="wrap">
@@ -97,24 +108,6 @@ function geotour_plugin_options_page() {
     </div>
   </div>
   <?php
-}
-
-/**
-* Function to check the validity of the API key.
-*/
-function geotour_check_api_key($api_key) {
-  $test_url = 'https://www.geotour.gr/wp-json/panotours/v2/listings?language=en&lat=35.035557&lon=24.789770&radius=30&category=pois&apikey=' . $api_key;
-
-  $response = wp_remote_get($test_url);
-  $response_body = wp_remote_retrieve_body($response);
-  $response_data = json_decode($response_body);
-
-  // Check for the "rest_forbidden" error code
-  if (isset($response_data->code) && $response_data->code === 'rest_forbidden') {
-    return false;
-  }
-
-  return true;
 }
 
 /**
