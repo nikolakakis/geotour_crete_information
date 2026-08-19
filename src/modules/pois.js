@@ -1,6 +1,90 @@
 //import $ from 'jquery';
 
-var thelang = document.getElementsByTagName('html')[0].getAttribute('lang');
+// UI chrome (labels, buttons, tooltips — everything that isn't raw POI data
+// from the geotour.gr API) per content language. Content itself already
+// arrives translated via the shortcode's own `lang` attribute (see
+// shortcodes.php); this dictionary keeps the surrounding chrome in the same
+// language instead of always English. Falls back to `en` for any language
+// with no entry here, and per-shortcode because each container reads its
+// own `data-lang` rather than a single page-wide setting.
+const POIS_STRINGS = {
+    en: {
+        quickInfo: 'Quick Information',
+        close: 'Close',
+        tabPrice: 'Price',
+        tabHours: 'Hours',
+        tabNotes: 'Notes',
+        priceLabel: 'Price:',
+        viewDetails: 'View Details',
+        viewOnGeotour: 'View on Geotour',
+        distance: (km) => `${km} km`,
+        distanceAway: (km) => `📍 ${km} km away`,
+        closeModal: 'Close modal',
+        exploreMore: 'Explore more on Geotour',
+        prevImage: 'Previous image',
+        nextImage: 'Next image',
+        goToSlide: (n) => `Go to slide ${n}`,
+        errorLoading: 'Error loading POIs.',
+    },
+    el: {
+        quickInfo: 'Γρήγορες πληροφορίες',
+        close: 'Κλείσιμο',
+        tabPrice: 'Τιμή',
+        tabHours: 'Ώρες',
+        tabNotes: 'Σημειώσεις',
+        priceLabel: 'Τιμή:',
+        viewDetails: 'Προβολή λεπτομερειών',
+        viewOnGeotour: 'Προβολή στο Geotour',
+        distance: (km) => `${km} χλμ`,
+        distanceAway: (km) => `📍 ${km} χλμ απόσταση`,
+        closeModal: 'Κλείσιμο',
+        exploreMore: 'Περισσότερα στο Geotour',
+        prevImage: 'Προηγούμενη εικόνα',
+        nextImage: 'Επόμενη εικόνα',
+        goToSlide: (n) => `Μετάβαση στη διαφάνεια ${n}`,
+        errorLoading: 'Σφάλμα φόρτωσης σημείων ενδιαφέροντος.',
+    },
+    de: {
+        quickInfo: 'Kurzinfo',
+        close: 'Schließen',
+        tabPrice: 'Preis',
+        tabHours: 'Öffnungszeiten',
+        tabNotes: 'Hinweise',
+        priceLabel: 'Preis:',
+        viewDetails: 'Details ansehen',
+        viewOnGeotour: 'Auf Geotour ansehen',
+        distance: (km) => `${km} km`,
+        distanceAway: (km) => `📍 ${km} km entfernt`,
+        closeModal: 'Fenster schließen',
+        exploreMore: 'Mehr auf Geotour entdecken',
+        prevImage: 'Vorheriges Bild',
+        nextImage: 'Nächstes Bild',
+        goToSlide: (n) => `Zu Bild ${n} wechseln`,
+        errorLoading: 'Fehler beim Laden der Sehenswürdigkeiten.',
+    },
+    fr: {
+        quickInfo: 'Informations rapides',
+        close: 'Fermer',
+        tabPrice: 'Tarif',
+        tabHours: 'Horaires',
+        tabNotes: 'Remarques',
+        priceLabel: 'Tarif :',
+        viewDetails: 'Voir les détails',
+        viewOnGeotour: 'Voir sur Geotour',
+        distance: (km) => `${km} km`,
+        distanceAway: (km) => `📍 à ${km} km`,
+        closeModal: 'Fermer la fenêtre',
+        exploreMore: 'Découvrir sur Geotour',
+        prevImage: 'Image précédente',
+        nextImage: 'Image suivante',
+        goToSlide: (n) => `Aller à l'image ${n}`,
+        errorLoading: "Erreur lors du chargement des points d'intérêt.",
+    },
+};
+
+function getPoisStrings(lang) {
+    return POIS_STRINGS[lang] || POIS_STRINGS.en;
+}
 
 document.addEventListener('DOMContentLoaded', (event) => {
     const poiContainers = document.querySelectorAll('.pois-container');
@@ -23,6 +107,8 @@ class POIS{
             this.apiUrl = this.container.dataset.apiurl;
             this.radius = this.container.dataset.radius || 10;
             this.items = this.container.dataset.items || 12;
+            this.lang = this.container.dataset.lang || 'en';
+            this.strings = getPoisStrings(this.lang);
             this.primaryColor = getComputedStyle(this.container).getPropertyValue('--geotour-primary').trim() || '#0073aa';
             this.getPOIData();
         } else {
@@ -55,7 +141,7 @@ class POIS{
             })
             .catch(error => {
                 console.error("Error fetching POI data:", error);
-                this.container.innerHTML = "<p>Error loading POIs.</p>";
+                this.container.innerHTML = `<p>${this.strings.errorLoading}</p>`;
             });
     }
 
@@ -65,6 +151,11 @@ class POIS{
             this.primaryColor = color;
             this.container.style.setProperty('--geotour-primary', color);
         }
+        // Re-read data-lang too — the admin wizard preview updates it on the
+        // same container before calling refresh() when the language <select>
+        // changes.
+        this.lang = this.container.dataset.lang || 'en';
+        this.strings = getPoisStrings(this.lang);
         this.getPOIData();
     }
 
@@ -80,7 +171,7 @@ class POIS{
         pois.forEach((poi, index) => {
             const hasPremiumData = poi.description || (poi.media_files && poi.media_files.length > 0);
             const linkClass = hasPremiumData ? 'geotour-poi-link premium-trigger' : 'geotour-poi-link';
-            const buttonText = hasPremiumData ? 'View Details' : 'View on Geotour';
+            const buttonText = hasPremiumData ? this.strings.viewDetails : this.strings.viewOnGeotour;
             
             // Extract nested fields safely and trim whitespace/empty values
             const price = (poi.listingfields?.price?.[0] || '').trim();
@@ -93,12 +184,12 @@ class POIS{
             if (price.length > 0 || pricesNotes.length > 0 || workingTime.length > 0 || openingHoursNotes.length > 0) {
                 quickInfoHtml = `
                     <div class="poi-quick-info">
-                        <button class="poi-quick-info-btn" aria-label="Quick Information" data-index="${index}">
+                        <button class="poi-quick-info-btn" aria-label="${this.strings.quickInfo}" data-index="${index}">
                             €
                         </button>
                     </div>
                 `;
-                
+
                 // Append popover to body to bypass all layout limits
                 let popoverHtml = `
                   <div class="poi-quick-info-popover" id="quick-info-popover-${index}">
@@ -106,17 +197,17 @@ class POIS{
                       <div class="quick-info-window">
                           <div class="quick-info-header">
                               <h4 class="quick-info-title">${poi.title}</h4>
-                              <button class="close-popover" aria-label="Close">×</button>
+                              <button class="close-popover" aria-label="${this.strings.close}">×</button>
                           </div>
                           <div class="quick-info-tabs">
-                              ${price || pricesNotes ? `<button class="tab-btn active" data-tab="price-${index}">Price</button>` : ''}
-                              ${workingTime ? `<button class="tab-btn ${!(price || pricesNotes) ? 'active' : ''}" data-tab="hours-${index}">Hours</button>` : ''}
-                              ${openingHoursNotes ? `<button class="tab-btn ${!(price || pricesNotes) && !workingTime ? 'active' : ''}" data-tab="special-${index}">Notes</button>` : ''}
+                              ${price || pricesNotes ? `<button class="tab-btn active" data-tab="price-${index}">${this.strings.tabPrice}</button>` : ''}
+                              ${workingTime ? `<button class="tab-btn ${!(price || pricesNotes) ? 'active' : ''}" data-tab="hours-${index}">${this.strings.tabHours}</button>` : ''}
+                              ${openingHoursNotes ? `<button class="tab-btn ${!(price || pricesNotes) && !workingTime ? 'active' : ''}" data-tab="special-${index}">${this.strings.tabNotes}</button>` : ''}
                           </div>
                           <div class="quick-info-content">
                               ${price || pricesNotes ? `
                               <div class="tab-pane active" id="price-${index}">
-                                  ${price ? `<strong>Price:</strong> ${price}<br>` : ''}
+                                  ${price ? `<strong>${this.strings.priceLabel}</strong> ${price}<br>` : ''}
                                   ${pricesNotes ? `<span>${pricesNotes}</span>` : ''}
                               </div>
                               ` : ''}
@@ -154,7 +245,7 @@ class POIS{
                     <a class="${linkClass}" target="_blank" href="${poi.url}" data-index="${index}">
                         <img src="${poi.listingsThumbUrl}" alt="${poi.title} featured image" loading="lazy">
                         <div class="poi-categories">${poi.listingCategory ? poi.listingCategory.map(cat => cat.name).join(', ') : ''}</div>
-                        <div class="poi-distance">${poi.distance} km</div>
+                        <div class="poi-distance">${this.strings.distance(poi.distance)}</div>
                     </a>
                 </div>
                 <div class="poi-content">
@@ -243,6 +334,12 @@ class POIS{
 
     createModalContainer() {
         if (!document.getElementById('geotour-modal-overlay')) {
+            // The close-button label and CTA text are set on every openModal()
+            // call, not here — this shell is created once for the whole page
+            // (shared by every POIS instance), but different [geotour-information]
+            // shortcodes on the same page can have different languages, so the
+            // language-dependent chrome has to be set fresh per open, using
+            // whichever instance's trigger was actually clicked.
             const modalHTML = `
                 <div id="geotour-modal-overlay" class="geotour-modal-overlay">
                     <div class="geotour-modal-content">
@@ -255,7 +352,7 @@ class POIS{
                                 <span id="geotour-modal-distance"></span>
                             </div>
                             <div id="geotour-modal-desc" class="modal-desc"></div>
-                            <a id="geotour-modal-link" href="#" target="_blank" class="btn-read-more" rel="noopener noreferrer">Explore more on Geotour</a>
+                            <a id="geotour-modal-link" href="#" target="_blank" class="btn-read-more" rel="noopener noreferrer"></a>
                         </div>
                     </div>
                 </div>
@@ -318,13 +415,15 @@ class POIS{
         // Populate modal data
         document.getElementById('geotour-modal-title').textContent = poi.title;
         document.getElementById('geotour-modal-tags').textContent = poi.listingCategory ? poi.listingCategory.map(cat => cat.name).join(' • ') : '';
-        document.getElementById('geotour-modal-distance').innerHTML = `📍 ${poi.distance} km away`;
-        
+        document.getElementById('geotour-modal-distance').innerHTML = this.strings.distanceAway(poi.distance);
+
         // Handle descriptions
         const descHTML = poi.description ? poi.description : `<p>${poi.excerpt}</p>`;
         document.getElementById('geotour-modal-desc').innerHTML = descHTML;
-        
+
         document.getElementById('geotour-modal-link').href = poi.url;
+        document.getElementById('geotour-modal-link').textContent = this.strings.exploreMore;
+        document.querySelector('#geotour-modal-overlay .geotour-modal-close').setAttribute('aria-label', this.strings.closeModal);
 
         // Build Gallery
         const galleryContainer = document.getElementById('geotour-modal-gallery');
@@ -346,13 +445,13 @@ class POIS{
             sliderHTML += `<div class="slider-counter">1 / ${mediaFiles.length}</div>`;
             sliderHTML += `
                 <div class="slider-nav">
-                    <button class="slider-nav-prev disabled" aria-label="Previous image">❮</button>
-                    <button class="slider-nav-next" aria-label="Next image">❯</button>
+                    <button class="slider-nav-prev disabled" aria-label="${this.strings.prevImage}">❮</button>
+                    <button class="slider-nav-next" aria-label="${this.strings.nextImage}">❯</button>
                 </div>
             `;
             let dotsHTML = '<div class="slider-pagination">';
             mediaFiles.forEach((_, i) => {
-                dotsHTML += `<button class="slider-dot ${i === 0 ? 'active' : ''}" data-index="${i}" aria-label="Go to slide ${i+1}"></button>`;
+                dotsHTML += `<button class="slider-dot ${i === 0 ? 'active' : ''}" data-index="${i}" aria-label="${this.strings.goToSlide(i + 1)}"></button>`;
             });
             dotsHTML += '</div>';
             sliderHTML += dotsHTML;

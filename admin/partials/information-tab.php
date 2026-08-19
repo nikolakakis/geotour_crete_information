@@ -8,7 +8,7 @@
     <div class="geotour-guidelines">
         <p>To use the wizard, you need to set the point on the map below first. From this point, all the listings from the selected categories that are within the specified radius will be displayed.</p>
         <p>The "Max Items" number determines the maximum number of listings that can be shown at a time.  The maximum number cannot exceed 20 per shortcode.</p>
-        <p>Language applies site-wide, not per shortcode — set it under <a href="#geotour_content_language">Content Language</a> above.</p>
+        <p>Choose the content language for this shortcode below — each <code>[geotour-information]</code> shortcode can use a different one. The <a href="#geotour_content_language">Content Language</a> setting above is only the default for shortcodes that don't set their own.</p>
     </div>
 
     <form id="geotour-information-shortcode-form">
@@ -92,6 +92,16 @@
 
               <label for="primary-color">Primary Color:</label>
               <input type="color" id="primary-color" name="primary-color" value="#0073aa">
+
+              <label for="lang">Language:</label>
+              <select id="lang" name="lang">
+                  <?php
+                  $current_default_lang = get_option( 'geotour_content_language', 'en' );
+                  foreach ( geotour_crete_information_supported_languages() as $lang_code => $lang_label ) :
+                  ?>
+                      <option value="<?php echo esc_attr( $lang_code ); ?>" <?php selected( $current_default_lang, $lang_code ); ?>><?php echo esc_html( $lang_label ); ?></option>
+                  <?php endforeach; ?>
+              </select>
           </div>
       </div>
     </form>
@@ -114,9 +124,10 @@
             'radius'   => '10',
             'category' => 'environment,fortifications,locations-areas',
             'items'    => '12',
+            'lang'     => $current_default_lang,
         ),
         rest_url( 'geotour/v1/listings' )
     );
     ?>
-    <div id="preview-container" class="pois-container" data-apiurl="<?php echo esc_url( $preview_api_url ); ?>"></div>
+    <div id="preview-container" class="pois-container" data-apiurl="<?php echo esc_url( $preview_api_url ); ?>" data-lang="<?php echo esc_attr( $current_default_lang ); ?>"></div>
 </div>

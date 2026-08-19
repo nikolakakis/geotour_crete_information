@@ -31,9 +31,14 @@ document.addEventListener('DOMContentLoaded', function () {
         const radius = document.getElementById('radius').value;
         const maxItems = document.getElementById('max-items').value;
         const categories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(el => el.value).join(',');
+        const lang = document.getElementById('lang').value;
 
-        const apiUrl = `${geotourSettings.restUrl}?lat=${lat}&lon=${lon}&radius=${radius}&category=${categories}&items=${maxItems}`;
-        document.getElementById('preview-container').setAttribute('data-apiurl', apiUrl);
+        const apiUrl = `${geotourSettings.restUrl}?lat=${lat}&lon=${lon}&radius=${radius}&category=${categories}&items=${maxItems}&lang=${lang}`;
+        const previewContainer = document.getElementById('preview-container');
+        previewContainer.setAttribute('data-apiurl', apiUrl);
+        // Drives pois.js's UI-chrome dictionary (labels, buttons, tooltips) in
+        // the preview, same as the container the shortcode itself renders.
+        previewContainer.setAttribute('data-lang', lang);
     }
 
     updatePreviewUrl(); // Call it once on load.
@@ -100,8 +105,9 @@ document.addEventListener('DOMContentLoaded', function () {
             return el.value;
         }).join(',');
         var color = document.getElementById('primary-color').value;
+        var lang = document.getElementById('lang').value;
 
-        var shortcode = `[geotour-information category="${categories}" lat="${lat}" lon="${lon}" max-items="${maxItems}" radius="${radius}" color="${color}"]`;
+        var shortcode = `[geotour-information category="${categories}" lat="${lat}" lon="${lon}" max-items="${maxItems}" radius="${radius}" color="${color}" lang="${lang}"]`;
         document.getElementById('generated-shortcode').value = shortcode;
 
         var apiUrl = document.getElementById('preview-container').getAttribute('data-apiurl');
@@ -124,18 +130,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Fetch and display data in the preview container. No API key: events
         // are always public (see includes/api.php's geotour_fetch_events_proxy()).
-        var apiUrl = `https://www.geotour.gr/wp-json/tribe/events/v1/events?lat=${lat}&lon=${lon}&radius=${radius}&max-items=${maxItems}`;
+        var apiUrl = `https://www.geotour.gr/wp-json/geotour/v3/nearby-events?lat=${lat}&lon=${lon}&radius=${radius}&max_items=${maxItems}`;
         fetch(apiUrl)
             .then(response => response.json())
             .then(data => {
                 var html = '';
                 data.forEach(event => {
+                    var eventDate = event.start ? new Date(event.start.replace(' ', 'T')).toLocaleDateString() : '';
                     html += `
                         <div class="event-item">
                             <a target="_blank" href="${event.url}">
                                 <div class="event-image-wrapper">
-                                    <img src="${event.image}" alt="${event.title} featured image">
-                                    <div class="event-date">${event.date}</div>
+                                    <img src="${event.image || ''}" alt="${event.title} featured image">
+                                    <div class="event-date">${eventDate}</div>
                                 </div>
                             </a>
                             <h3><a target="_blank" href="${event.url}">${event.title}</a></h3>

@@ -121,6 +121,8 @@ function geotour_crete_information_supported_languages() {
   return apply_filters( 'geotour_crete_information_languages', array(
     'en' => 'English',
     'el' => 'Ελληνικά (Greek)',
+    'de' => 'Deutsch (German)',
+    'fr' => 'Français (French)',
   ) );
 }
 
@@ -184,7 +186,7 @@ add_action('admin_init', 'geotour_plugin_settings');
 * Callback function for language section content.
 */
 function geotour_language_section_callback() {
-  echo '<p>Language requested from Geotour for the Information (listings) shortcode. Applies site-wide — every [geotour-information] shortcode on this site uses the same language. Events are always in English for now.</p>';
+  echo '<p>Default language requested from Geotour for the Information (listings) shortcode. Used by any [geotour-information] shortcode that doesn\'t set its own <code>lang</code> attribute — each shortcode can override this individually. Events are always in English for now.</p>';
 }
 
 /**

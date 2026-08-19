@@ -19,5 +19,5 @@
     <textarea id="generated-shortcode-events" readonly></textarea>
     <h2>Preview</h2>
     <?php $api_key = get_option('geotour_api_key'); ?>
-    <div id="preview-container-events" class="geotour-events-container" data-apiurl="https://www.geotour.gr/wp-json/tribe/events/v1/events?lat=35.2&lon=25.1&radius=10&max-items=12&apikey=<?php echo esc_attr($api_key); ?>"></div>
+    <div id="preview-container-events" class="geotour-events-container" data-apiurl="https://www.geotour.gr/wp-json/geotour/v3/nearby-events?lat=35.2&lon=25.1&radius=10&max_items=12"></div>
 </div>
