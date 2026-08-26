@@ -123,6 +123,9 @@ function geotour_crete_information_supported_languages() {
     'el' => 'Ελληνικά (Greek)',
     'de' => 'Deutsch (German)',
     'fr' => 'Français (French)',
+    'es' => 'Español (Spanish)',
+    'nl' => 'Nederlands (Dutch)',
+    'pl' => 'Polski (Polish)',
   ) );
 }
 
