@@ -79,25 +79,29 @@ function geotour_fetch_listings_proxy( $request ) {
     // English with HTTP 200, so an unrecognized value is still safe.
     $language = $request->get_param( 'lang' ) ? $request->get_param( 'lang' ) : get_option( 'geotour_content_language', 'en' );
 
-    // 3. Build the target URL
-    $target_url = "https://www.geotour.gr/wp-json/panotours/v2/listings?items={$items}&language=" . urlencode( $language ) . "&lat={$lat}&lon={$lon}&radius={$radius}&category={$category}";
+    // Serve from cache when another visitor (or the same one, reloading)
+    // asked for the same parameters within the last 15 minutes, instead of
+    // making geotour.gr do the work again. The key deliberately excludes the
+    // API key, which is constant per site.
+    $cache_key = 'geotour_listings_' . md5( wp_json_encode( array( $lat, $lon, $category, $items, $radius, $language ) ) );
+    $cached = get_transient( $cache_key );
+    if ( false !== $cached ) {
+        return rest_ensure_response( $cached );
+    }
+
+    // 3. Build the target URL. The key is passed both as a header and as the
+    // `apikey` query parameter in a single request — geotour.gr's endpoint
+    // has historically been called with the URL form, so both are sent
+    // together rather than firing two separate requests to find out which
+    // one it honors.
+    $target_url = "https://www.geotour.gr/wp-json/panotours/v2/listings?items={$items}&language=" . urlencode( $language ) . "&lat={$lat}&lon={$lon}&radius={$radius}&category={$category}&apikey=" . urlencode( $api_key );
 
     // 4. Make the secure server-to-server request
     $response = wp_remote_get( $target_url, array(
         'timeout'     => 15,
         'headers'     => array(
             'Referer'   => home_url(), // Explicitly sets the domain for validation
-            'X-API-Key' => $api_key    // Pass key in header
-        )
-    ) );
-
-    // fallback: also append the apikey parameter if the API expects it in URL. The TODO says: "Pass key in header (recommended) or URL". We can do both to be safe, or just append it to the URL if the current code did so.
-    // The shortcode currently appends `&apikey=` to url. Let's do that for backwards compatibility on the Geotour server.
-    $target_url .= "&apikey=" . urlencode($api_key);
-    $response = wp_remote_get( $target_url, array(
-        'timeout'     => 15,
-        'headers'     => array(
-            'Referer'   => home_url() // Explicitly sets the domain for validation
+            'X-API-Key' => $api_key    // Pass key in header too
         )
     ) );
 
@@ -108,6 +112,12 @@ function geotour_fetch_listings_proxy( $request ) {
 
     $body = wp_remote_retrieve_body( $response );
     $data = json_decode( $body );
+
+    // Only cache a response that actually looks like data — an upstream
+    // error shouldn't get pinned in place for 15 minutes.
+    if ( 200 === wp_remote_retrieve_response_code( $response ) && null !== $data ) {
+        set_transient( $cache_key, $data, 15 * MINUTE_IN_SECONDS );
+    }
 
     // 6. Return data back to the frontend JS
     return rest_ensure_response( $data );

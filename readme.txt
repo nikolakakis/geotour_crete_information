@@ -5,7 +5,7 @@ Banner Image: banner-772x250.png
 Requires at least: 6.0
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.6.3
+Stable tag: 1.6.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -61,6 +61,9 @@ Please check the plugin page https://www.geotour.gr/about-geotour/geotour-share-
    [screenshot-2.png]
 
 == Changelog ==
+= 1.6.4 =
+* Fixed the Information (listings) shortcode calling geotour.gr twice per page load instead of once.
+* Added local caching (15 minutes) for the Information shortcode, matching the Events shortcode, so repeat visits to the same content reuse the cached result instead of asking geotour.gr again.
 = 1.6.1 =
 * Events shortcode now filters by radius on the server instead of downloading Geotour's entire event list to every visitor's browser, and caches the upstream fetch for 15 minutes.
 * Removed a stray unused API check on the settings page and fixed the admin Events preview, which had been silently empty.
